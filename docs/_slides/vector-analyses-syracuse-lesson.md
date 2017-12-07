@@ -7,24 +7,30 @@ output: html_document
 
 ## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This exercise will introduce participants to vector manipulation with some integration with raster.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
+We are used lead and heavy metal measurement points to examine vulnerability of population to  
 You can also embed plots, for example:
+
+#### PART I: Loading libraries and setting up input and output directories
+
+Note that we are sourcing an external file containing utility functions.
 
 
 ~~~r
+#note that this code chunk is name pressure. Each chunk need to have a unique name.
+#if no name is provided then the chunk is assigned an internal name automatically.
 library(gstat) #spatial interpolation and kriging methods
 library(sp) # spatial/geographfic objects and functions
 library(rgdal) #GDAL/OGR binding for R with functionalities
 ~~~
 {:.input}
 ~~~
-rgdal: version: 1.2-12, (SVN revision 681)
+rgdal: version: 1.2-16, (SVN revision 701)
  Geospatial Data Abstraction Library extensions to R successfully loaded
  Loaded GDAL runtime: GDAL 2.1.3, released 2017/20/01
  Path to GDAL shared files: /usr/share/gdal/2.1
+ GDAL binary built with GEOS: TRUE 
  Loaded PROJ.4 runtime: Rel. 4.9.2, 08 September 2015, [PJ_VERSION: 492]
  Path to PROJ.4 shared files: (autodetected)
  Linking to sp version: 1.2-5 
@@ -111,7 +117,7 @@ library(rgeos) #contains topological operations
 ~~~
 {:.input}
 ~~~
-rgeos version: 0.3-25, (SVN revision 555)
+rgeos version: 0.3-26, (SVN revision 560)
  GEOS runtime version: 3.5.1-CAPI-1.9.1 r4246 
  Linking to sp version: 1.2-5 
  Polygon checking: TRUE 
@@ -208,7 +214,7 @@ library(sf)
 ~~~
 {:.input}
 ~~~
-Linking to GEOS 3.5.0, GDAL 2.1.3, proj.4 4.9.2
+Linking to GEOS 3.5.1, GDAL 2.1.3, proj.4 4.9.2
 ~~~
 {:.input}
 ~~~r
@@ -229,7 +235,7 @@ out_dir <- "/nfs/bparmentier-data/Data/workshop_spatial/sesync2018_workshop/Exer
 file_format <- ".tif" #PARAM5
 NA_value <- -9999 #PARAM6
 NA_flag_val <- NA_value #PARAM7
-out_suffix <-"exercise1_10042017" #output suffix for the files and ouptu folder #PARAM 8
+out_suffix <-"exercise1_12052017" #output suffix for the files and ouptu folder #PARAM 8
 create_out_dir_param=TRUE #PARAM9
 
 ################# START SCRIPT ###############################
@@ -247,7 +253,15 @@ if(create_out_dir_param==TRUE){
 }else{
   setwd(out_dir) #use previoulsy defined directory
 }
+~~~
+{:.output}
 
+#### PART I: Reading data and exploring values
+
+Let's read in the datasets using the "sf" R package for shapefiles.
+
+
+~~~r
 ### PART I: EXPLORE DATA: READ AND DISPLAY #######
 
 ct_2000_fname <- "ct_00.shp" # CT_00: Cencus Tracts 2000
@@ -259,40 +273,55 @@ soil_PB_table_fname <- "Soil_PB.csv" #same as census table
 
 metals_table_fname <- "SYR_metals.xlsx" #contains metals data to be linked
 
-ct_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(ct_2000_fname))) #read in shapefile
+#ct_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(ct_2000_fname))) #read in shapefile
+#bg_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(bg_2000_fname)))
+#bk_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(bk_2000_fname)))
+ct_2000_sf <- st_read(file.path(in_dir_var,ct_2000_fname)) #read in shapefile
 ~~~
 {:.input}
 ~~~
-OGR data source with driver: ESRI Shapefile 
-Source: "/nfs/bparmentier-data/Data/workshop_spatial/sesync2018_workshop/Exercise_1/data", layer: "ct_00"
-with 57 features
-It has 7 fields
-~~~
-{:.input}
-~~~r
-bg_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(bg_2000_fname)))
-~~~
-{:.input}
-~~~
-OGR data source with driver: ESRI Shapefile 
-Source: "/nfs/bparmentier-data/Data/workshop_spatial/sesync2018_workshop/Exercise_1/data", layer: "bg_00"
-with 147 features
-It has 3 fields
+Reading layer `ct_00' from data source `/nfs/bparmentier-data/Data/workshop_spatial/sesync2018_workshop/Exercise_1/data/ct_00.shp' using driver `ESRI Shapefile'
+Simple feature collection with 57 features and 7 fields
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 401938.3 ymin: 4759734 xmax: 412486.4 ymax: 4771049
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 ~~~
 {:.input}
 ~~~r
-bk_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(bk_2000_fname)))
+bg_2000_sf <- st_read(file.path(in_dir_var,bg_2000_fname))
 ~~~
 {:.input}
 ~~~
-OGR data source with driver: ESRI Shapefile 
-Source: "/nfs/bparmentier-data/Data/workshop_spatial/sesync2018_workshop/Exercise_1/data", layer: "bk_00"
-with 2025 features
-It has 7 fields
-Integer64 fields read as strings:  ID 
+Reading layer `bg_00' from data source `/nfs/bparmentier-data/Data/workshop_spatial/sesync2018_workshop/Exercise_1/data/bg_00.shp' using driver `ESRI Shapefile'
+Simple feature collection with 147 features and 3 fields
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 401938.3 ymin: 4759734 xmax: 412486.4 ymax: 4771049
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 ~~~
 {:.input}
 ~~~r
+bk_2000_sf <- st_read(file.path(in_dir_var,bk_2000_fname))
+~~~
+{:.input}
+~~~
+Reading layer `bk_00' from data source `/nfs/bparmentier-data/Data/workshop_spatial/sesync2018_workshop/Exercise_1/data/bk_00.shp' using driver `ESRI Shapefile'
+Simple feature collection with 2025 features and 7 fields
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 401942.7 ymin: 4759737 xmax: 412495.1 ymax: 4771054
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+~~~
+{:.input}
+~~~r
+ct_2000_sp <- as(ct_2000_sf,"Spatial")
+bg_2000_sp <- as(bg_2000_sf,"Spatial")
+bk_2000_sp <- as(bk_2000_sf,"Spatial")
+
 census_syr_df <- read.table(file.path(in_dir_var,census_table_fname),sep=",",header=T) #read in textfile
 metals_df <-read_excel( file.path(in_dir_var,metals_table_fname),1) #use function from readxl
 
@@ -366,12 +395,12 @@ head(bg_2000_sp)
 {:.input}
 ~~~
        BKG_KEY Shape_Leng Shape_Area
-0 360670001001  13520.233  6135183.6
-1 360670003002   2547.130   301840.0
-2 360670003001   2678.046   250998.4
-3 360670002001   3391.920   656275.6
-4 360670004004   2224.179   301085.7
-5 360670004001   3263.257   606494.9
+1 360670001001  13520.233  6135183.6
+2 360670003002   2547.130   301840.0
+3 360670003001   2678.046   250998.4
+4 360670002001   3391.920   656275.6
+5 360670004004   2224.179   301085.7
+6 360670004001   3263.257   606494.9
 ~~~
 {:.input}
 ~~~r
@@ -392,7 +421,7 @@ bg_2000_sp <- merge(bg_2000_sp,census_syr_df,by="BKG_KEY") #Join
 spplot(bg_2000_sp,"POP2000",main="POP2000") #quick visualization of population 
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-1.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-1.png)
 
 ~~~r
 ##Aggregate data from block group to census
@@ -405,7 +434,7 @@ plot(census_2000_sp)
 plot(ct_2000_sp,border="red",add=T)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-2.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-2.png)
 
 ~~~r
 nrow(census_2000_sp)==nrow(ct_2000_sp)
@@ -467,7 +496,7 @@ p_plot_pop2000_ct <- spplot(ct_2000_sp,
 print(p_plot_pop2000_ct)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-3.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-3.png)
 
 ~~~r
 ### Another map with different class intervals
@@ -483,7 +512,7 @@ p_plot_pop2000_ct <- spplot(ct_2000_sp,
 print(p_plot_pop2000_ct)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-4.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-4.png)
 
 ~~~r
 ####### PART II: SPATIAL QUERY #############
@@ -599,7 +628,7 @@ plot(census_metals_sp)
 plot(soil_PB_sp,add=T)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-5.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-5.png)
 
 ~~~r
 ###### Spatial query: associate points of pb measurements to each census tract
@@ -657,7 +686,7 @@ plot(extent_reg)
 plot(census_metals_pb_sp,add=T)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-6.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-6.png)
 
 ~~~r
 extent_matrix <- as.matrix(extent_reg)
@@ -710,7 +739,7 @@ plot(census_metals_pb_sp,border="blue",add=T)
 plot(r_poly,add=T)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-7.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-7.png)
 
 ~~~r
 ## Transform the raster layer into a sp Grid object for kriging
@@ -730,7 +759,7 @@ v_ppm <- variogram(ppm ~ 1,soil_PB_sp)
 plot(v_ppm)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-8.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-8.png)
 
 ~~~r
 ## Fit a variogram model from lead data
@@ -739,7 +768,7 @@ v_ppm_fit <- fit.variogram(v_ppm,model=vgm(1,"Sph",900,1))
 plot(v_ppm,v_ppm_fit)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-9.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-9.png)
 
 ~~~r
 ##Generate a kriging surface using data and modeled variogram: this may take more than 3 minutes
@@ -783,7 +812,7 @@ plot(r_lead,col=col_palette)
 plot(census_metals_pb_sp,border="blue",add=T)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-10.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-10.png)
 
 ~~~r
 ## Save raster layers produced from kriging
@@ -797,26 +826,26 @@ census_lead_sp <- extract(r_lead,census_metals_pb_sp,sp=T,fun=mean) #extract ave
 spplot(census_metals_pb_sp,"pb_ppm",col.regions=col_palette,main="Averaged from blockgroups") #
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-11.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-11.png)
 
 ~~~r
 spplot(census_lead_sp,"var1.pred",col.regions=col_palette,main="Averaged from kriging ") 
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-12.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-12.png)
 
 ~~~r
 census_lead_sp$diff <- census_metals_pb_sp$pb_ppm - census_lead_sp$var1.pred #comparing the averages
 hist(census_lead_sp$diff)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-13.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-13.png)
 
 ~~~r
 spplot(census_lead_sp,"diff",col.regions=col_palette,main="Difference in averages")
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-14.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-14.png)
 
 ~~~r
 ##### PART IV: Spatial autocrrelation and regression #############
@@ -838,9 +867,9 @@ Link number distribution:
  1  2  3  4  5  6  7  8  9 
  1  2  5  7 14 16  5  6  1 
 1 least connected region:
-50 with 1 link
+51 with 1 link
 1 most connected region:
-28 with 9 links
+29 with 9 links
 ~~~
 {:.input}
 ~~~r
@@ -848,7 +877,7 @@ plot(census_lead_sp,border="blue")
 plot.nb(list_nb,coordinates(census_lead_sp),add=T)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-15.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-15.png)
 
 ~~~r
 #generate weights
@@ -877,9 +906,9 @@ Link number distribution:
  1  2  3  4  5  6  7  8  9 
  1  2  5  7 14 16  5  6  1 
 1 least connected region:
-50 with 1 link
+51 with 1 link
 1 most connected region:
-28 with 9 links
+29 with 9 links
 
 Weights style: W 
 Weights constants summary:
@@ -905,7 +934,7 @@ moran.plot(census_lead_sp$pb_ppm, list_w,
            labels=as.character(census_lead_sp$TRACT), pch=19)
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-16.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-16.png)
 
 ~~~r
 ##### Now do a spatial regression
@@ -970,7 +999,7 @@ r_moran <- MoranLocal(r_lead)
 plot(r_moran) # hotspots?
 ~~~
 
-![plot of chunk pressure]({{ site.baseurl }}/images/pressure-17.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-17.png)
 
 ~~~r
 ################### END OF SCRIPT ##########################

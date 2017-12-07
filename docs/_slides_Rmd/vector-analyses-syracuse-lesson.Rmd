@@ -9,13 +9,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This exercise will introduce participants to vector manipulation with some integration with raster.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
+We are used lead and heavy metal measurement points to examine vulnerability of population to  
 You can also embed plots, for example:
 
+#### PART I: Loading libraries and setting up input and output directories
+
+Note that we are sourcing an external file containing utility functions.
+
 ```{r pressure, echo=TRUE}
+#note that this code chunk is name pressure. Each chunk need to have a unique name.
+#if no name is provided then the chunk is assigned an internal name automatically.
 library(gstat) #spatial interpolation and kriging methods
 library(sp) # spatial/geographfic objects and functions
 library(rgdal) #GDAL/OGR binding for R with functionalities
@@ -57,7 +62,7 @@ out_dir <- "/nfs/bparmentier-data/Data/workshop_spatial/sesync2018_workshop/Exer
 file_format <- ".tif" #PARAM5
 NA_value <- -9999 #PARAM6
 NA_flag_val <- NA_value #PARAM7
-out_suffix <-"exercise1_10042017" #output suffix for the files and ouptu folder #PARAM 8
+out_suffix <-"exercise1_12052017" #output suffix for the files and ouptu folder #PARAM 8
 create_out_dir_param=TRUE #PARAM9
 
 ################# START SCRIPT ###############################
@@ -76,6 +81,14 @@ if(create_out_dir_param==TRUE){
   setwd(out_dir) #use previoulsy defined directory
 }
 
+```
+
+#### PART I: Reading data and exploring values
+
+Let's read in the datasets using the "sf" R package for shapefiles.
+
+```{r , echo=TRUE}
+
 ### PART I: EXPLORE DATA: READ AND DISPLAY #######
 
 ct_2000_fname <- "ct_00.shp" # CT_00: Cencus Tracts 2000
@@ -87,9 +100,16 @@ soil_PB_table_fname <- "Soil_PB.csv" #same as census table
 
 metals_table_fname <- "SYR_metals.xlsx" #contains metals data to be linked
 
-ct_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(ct_2000_fname))) #read in shapefile
-bg_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(bg_2000_fname)))
-bk_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(bk_2000_fname)))
+#ct_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(ct_2000_fname))) #read in shapefile
+#bg_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(bg_2000_fname)))
+#bk_2000_sp <- readOGR(dsn=in_dir_var,sub(".shp","",basename(bk_2000_fname)))
+ct_2000_sf <- st_read(file.path(in_dir_var,ct_2000_fname)) #read in shapefile
+bg_2000_sf <- st_read(file.path(in_dir_var,bg_2000_fname))
+bk_2000_sf <- st_read(file.path(in_dir_var,bk_2000_fname))
+
+ct_2000_sp <- as(ct_2000_sf,"Spatial")
+bg_2000_sp <- as(bg_2000_sf,"Spatial")
+bk_2000_sp <- as(bk_2000_sf,"Spatial")
 
 census_syr_df <- read.table(file.path(in_dir_var,census_table_fname),sep=",",header=T) #read in textfile
 metals_df <-read_excel( file.path(in_dir_var,metals_table_fname),1) #use function from readxl
