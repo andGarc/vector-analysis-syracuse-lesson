@@ -1,0 +1,203 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+## Import Clarity
+
+```{r, title = '{{ site.handouts[0] }}' }
+library('modules')
+```
+
+## Features
+
+```{r, title = '{{ site.handouts[0] }}' }
+sf <- import('sf')
+
+lead <- read.csv('data/Soil_PB.csv')
+lead[['geometry']] <- sf$st_sfc(
+  sf$st_point(),
+  crs = 32618)
+```
+
+```{r}
+head(lead)
+```
+
+===
+
+simple feature geometry | description
+`st_point` | a single point
+`st_linestring` | sequence of points connected by straight, non-self intersecting line pieces
+`st_polygon` | one or more sequences of points in a closed, non-self intersecting ring; the first ring denotes the exterior ring, zero or more subsequent rings denote holes in this exterior ring
+`st_multi*` | set of points/linestrings/polygongs; a MULTIPOINT is simple if no two Points in the MULTIPOINT are equal
+
+===
+
+Each element of the simple feature column is a simple feature geometry, here
+created from the "x" and "y" elements of a given feature.
+
+```{r, title = '{{ site.handouts[0] }}' }
+lead[[1, 'geometry']] <- sf$st_point(
+  c(x = lead[[1, 'x']], y = lead[[1, 'y']]),
+  dim = 'XY')
+```
+
+```{r}
+head(lead)
+```
+
+===
+
+The whole data frame must be cast to a simple feature object, which causes
+functions like `print` and `plot` to use methods introduced by the `sf` library.
+
+```{r, title = '{{ site.handouts[0] }}' }
+lead <- sf$st_sf(lead)
+```
+
+===
+
+Naturally, there is a shortcut to creating an `sf` object from a data frame with
+point coordinates. The CRS must be specified, via EPSG integer or proj4 string.
+
+```{r, title = '{{ site.handouts[0] }}' }
+lead <- read.csv('data/Soil_PB.csv')
+lead <- sf$st_as_sf(lead,
+  coords = c('x', 'y'),
+  crs = 32618)
+```
+
+```{r}
+lead
+```
+
+===
+
+Now that table is an `sf` object, the data are easilly displayed as a map.
+
+```{r, title = '{{ site.handouts[0] }}' }
+plot(lead['ppm'])
+```
+
+===
+
+## Feature Collections == Tabular Data
+
+More complicated geometries are usually not stored in CSV files, but they are
+usually still read as tabular data. We will see that the similarity of feature
+collections to non-spatial tabular data goes quite far; the usual data
+manipulations done on tabular data work just as well on `sf` objects.
+{:.notes}
+
+```{r, title = '{{ site.handouts[0] }}' }
+blockgroups <- sf$read_sf('data/bg_00.shp')
+```
+
+===
+
+Confirm that the coordinates in the geometry column could be in UTM.
+
+```{r}
+head(blockgroups)
+```
+
+The table dimensions show 147 features in the collection.
+
+```{r}
+dim(blockgroups)
+```
+
+===
+
+The `blockgroups` object is a `data.frame`, but it also has the class attribute
+of `sf`. This includes some natural extensions, including some variations on
+subsetting. The geometry column is "sticky".
+
+```{r}
+blockgroups[1:5, 'BKG_KEY']
+```
+
+===
+
+## Common Table Operations
+
+- scatter plot
+- "merge" or "join"
+- "split-apply-combine" or "group-by and summarize"
+
+===
+
+The "x" in the usual `plot(x, y, ...)` essentially becomes the "geometry" column
+that sticks around for all `sf` objects. Only the "y" needs to be specified.
+
+```{r}
+plot(blockgroups['Shape_Area'])
+```
+
+===
+
+Merging with non-spatial data is done by non-spatial columns in both data frames.
+As usual, there's the difficulty that CSV files do not include metadata on data types,
+which have to be set manually.
+
+```{r, title = '{{ site.handouts[0] }}' }
+census <- read.csv('data/census.csv')
+census$BKG_KEY <- factor(census$BKG_KEY)
+```
+
+===
+
+Merge tables on unique identifier (primary key is "BKG_KEY"). Keep the "sf"
+object first, or the class attribute gets lost.
+
+```{r, title = '{{ site.handouts[0] }}', message = FALSE }
+import('dplyr', 
+  'inner_join', 'group_by', 'summarise')
+
+census_blockgroups <- inner_join(blockgroups, census, by = c('BKG_KEY'))
+```
+
+```{r}
+class(census_blockgroups)
+```
+
+===
+
+The census data is now easily vizualized as a map.
+
+```{r, title = '{{ site.handouts[0] }}'}
+plot(census_blockgroups['POP2000'])
+```
+
+===
+
+```{r, title = '{{ site.handouts[0] }}' }
+import('magrittr', '%>%')
+
+census_tracts <- census_blockgroups %>%
+  group_by(TRACT) %>%
+  summarise(
+    POP2000 = sum(POP2000),
+    perc_hispa = sum(HISPANIC) / sum(POP2000))
+plot(census_tracts['POP2000'])
+```
+
+===
+
+Read in the census tracts from a separate shapefile to confirm that the
+boundaries were dissolved as expected.
+
+```{r, title = '{{ site.handouts[0] }}' }
+tracts <- sf$read_sf('data/ct_00.shp')
+plot(sf$st_geometry(tracts), border = 'red', add = TRUE)
+```
+
+===
+
+By default, the sticky geometries are summarized with `st_union`. The
+alternative `st_combine` does not dissolve internal boundaries. Check
+`?summarise.sf` for more details.
+
+===
+

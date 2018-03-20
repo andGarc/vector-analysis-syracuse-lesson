@@ -1,10 +1,11 @@
 # Site
 
-title: Vector Analysis Syracuse Lesson
+title: Vector Operations in R
+subtitle: Lead Poisoning in Syracuse
 handouts: worksheet.R
 tag: v0.0
-lesson: 
-instructor: Benoit Parmentier
+lesson: 1
+instructor: Ian Carroll
 authors: 
   - Benoit Parmentier
   - Ian Carroll
@@ -13,7 +14,11 @@ authors:
 
 slide_sorter:
   - intro
-  - vector-analyses-syracuse-lesson
+  - read
+  - join
+  - smooth
+  - regress
+  - conclude
 
 #####################################
 # Only modify content above or risk #

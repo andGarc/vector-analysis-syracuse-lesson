@@ -1,0 +1,168 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+## Regression
+
+Continuing the theme that vector data **is** tabular data, the natural
+progression in statistical analysis is toward regression. Building a regression
+model requires making good assumptions about relationships in your data:
+
+- between **columns** as independent and dependent variables
+- between **rows* as more-or-less independent observations
+
+===
+
+The following model assumes an association (in the linear least-squares sense),
+between the hispanic population and lead concentrations and assumes independence
+of every census tract (i.e. row).
+
+
+~~~r
+ppm.lm <- lm(pred_ppm ~ perc_hispa, census_lead_pred_tracts)
+~~~
+
+~~~
+Error in is.data.frame(data): object 'census_lead_pred_tracts' not found
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+===
+
+Is that model any good?
+
+
+~~~r
+census_lead_pred_tracts['lm.residual'] <- resid(ppm.lm)
+~~~
+
+~~~
+Error in resid(ppm.lm): object 'ppm.lm' not found
+~~~
+
+~~~r
+plot(census_lead_pred_tracts['lm.residual'])
+~~~
+
+~~~
+Error in plot(census_lead_pred_tracts["lm.residual"]): object 'census_lead_pred_tracts' not found
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+===
+
+Polygons close to eachother tend to have similar residuals: there is autocorrelation. It is tempting to ask for a semivariogram plot of the residuals, but that requires a precise definition of the distance between polygons. A favored alternative for quantifying
+autoregression in non-point feature collections is Moran's I. This analog to Pearson's correlation coeficient quantifies autocorrelation rather than cross-correlation.
+{:.notes}
+
+Moran's I is the correlation between all pairs of features, weighted
+to emphasize features that are close together. It does not dodge the problem of distance weighting, it actually adds flexibility, along with some norms.
+
+
+~~~r
+sp <- import('sp')
+sd <- import('spdep')
+tracts <- as(sf$st_geometry(census_tracts), 'Spatial')
+tracts_nb <- sd$poly2nb(tracts)
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+===
+
+The `neighbors` variable is the network of features sharing a boundary point.
+
+
+~~~r
+sd$plot.nb(tracts_nb, sp$coordinates(tracts), add = TRUE)
+~~~
+
+~~~
+Error in segments(x[i], y[i], x[j], y[j], col = col[i], ...): plot.new has not been called yet
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+===
+
+Reshape the adjacency matrix into a list of neighbors with associated weights.
+
+
+~~~r
+tracts_weight <- sd$nb2listw(tracts_nb)
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+===
+
+Visualize correlation between the residuals and the weighted average of their
+neighbors with `moran.plot` from the [spdep](){:.Rpkg}
+
+
+~~~r
+sd$moran.plot(
+  census_lead_pred_tracts[['lm.residual']],
+  tracts_weight,
+  labels = census_lead_pred_tracts[['TRACT']], pch = 19)
+~~~
+
+~~~
+Error in is.vector(x): object 'census_lead_pred_tracts' not found
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+===
+
+There are many ways to use geospatial information about tracts to impose
+assumptions about non-independence between observations in the regression. One
+approach is a Spatial Auto-Regressive (SAR) model, which regresses each value against
+the weighted average of neighbors
+
+
+~~~r
+ppm.sarlm <- sd$lagsarlm(
+  pred_ppm ~ perc_hispa,
+  data = census_lead_pred_tracts,
+  tracts_weight,
+  tol.solve = 1.0e-30)
+~~~
+
+~~~
+Error in terms.formula(formula, data = data): object 'census_lead_pred_tracts' not found
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+===
+
+The Moran's I plot of residuals shows less correlation; which means the SAR
+model's assumption about spatial autocorrelation (i.e. between table rows) makes
+the rest of the model more plausible.
+
+
+~~~r
+sd$moran.plot(
+  resid(ppm.sarlm),
+  tracts_weight,
+  labels = census_lead_pred_tracts[['TRACT']], pch = 19)
+~~~
+
+~~~
+Error in resid(ppm.sarlm): object 'ppm.sarlm' not found
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+===
+
+Feeling more confident in the model, we can now take a look at the regression
+coefficients.
+
+
+~~~r
+summary(ppm.sarlm)
+~~~
+{:.input}
+~~~
+Error in summary(ppm.sarlm): object 'ppm.sarlm' not found
+~~~
+{:.output}
+
+
