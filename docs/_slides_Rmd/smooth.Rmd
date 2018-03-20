@@ -6,18 +6,18 @@ editor_options:
 ## The Semivariogram
 
 A semivariogram quantifies the effect of distance on the correlation between
-values from different locations. On **average**, measurements of the same variable
+values from different locations. *On average*, measurements of the same variable
 at two nearby locations are more similar (lower variance) than when those locations
 are distant.
 {:.notes}
 
-The [gstat](){:.Rpkg} library, a geospatial analogue to the [stats](){:.Rpkg}
+The [gstat](){:.rlib} library, a geospatial analogue to the [stats](){:.rlib}
 library provides variogram estimation among several additional tools.
 
 ```{r, title = '{{ site.handouts[0] }}'}
 g <- import('gstat')
 
-lead_xy <- read.csv('data/Soil_PB.csv')
+lead_xy <- read.csv('data/SYR_soil_PB.csv')
 ```
 
 ===
@@ -48,13 +48,13 @@ plot(v_ppm, v_ppm_fit)
 ===
 
 ## Kriging
-    
-The modeled semivariogram acts as a parameter for fitting a Guassian process, or
-Kriging. The steps to perform Kriging with the [gstat](){:.Rpkg} library are
 
-- [x] Generate a modeled semivariogram
-- [ ] Generate new locations for "predicted" values
-- [ ] Call `krige` with the data, locations, and semivariogram
+The modeled semivariogram acts as a parameter for fitting a Guassian process, or
+Kriging. The steps to perform Kriging with the [gstat](){:.rlib} library are
+
+1. Generate a modeled semivariogram
+1. Generate new locations for "predicted" values
+1. Call `krige` with the data, locations, and semivariogram
 
 ===
 
@@ -66,7 +66,8 @@ Remember, that goal is aggregating lead concentrations within each census tract.
 pred_ppm <- sf$st_make_grid(
   lead, cellsize = 400,
   what = 'centers')
-idx <- unlist(sf$st_intersects(census_tracts, pred_ppm))
+idx <- unlist(
+  sf$st_intersects(census_tracts, pred_ppm))
 pred_ppm <- pred_ppm[idx]
 ```
 
@@ -74,9 +75,11 @@ pred_ppm <- pred_ppm[idx]
 
 Map the result to verify generated points.
 
-```{r}
-plot(census_tracts['POP2000'], pal = cm.colors)
-plot(pred_ppm, pch = '.', add = TRUE)
+```{r, title = '{{ site.handouts[0] }}'}
+plot(census_tracts['POP2000'],
+  pal = cm.colors)
+plot(pred_ppm,
+  pch = '.', add = TRUE)
 ```
 
 ===
@@ -85,25 +88,26 @@ Like the `gstat` function, the `krige` function doesn't work seemlessly with
 `sf` objects, so again create a data frame with coordinates.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-pred_ppm_xy <- data.frame(do.call(rbind, pred_ppm))
+pred_ppm_xy <- data.frame(
+  do.call(rbind, pred_ppm))
 names(pred_ppm_xy) <- c('x', 'y')
 ```
 
 ===
 
-Almost dones ...
+Almost done ...
 
-- [x] Generate a modeled semivariogram
-- [x] Generate new locations for "predicted" values
-- [ ] Call `krige` with the data, locations, and semivariogram
+1. Generate a modeled semivariogram
+1. Generate new locations for "predicted" values
+1. Call `krige` with the data, locations, and semivariogram
 
 ===
 
 The first argument specifies the model for the means, which is constant according to our 
-formula for lead concentrations. The resuly, like the input for locations, is
+formula for lead concentrations. The result, like the input for locations, is
 a data frame with coordinates and a prediction for lead concentrations.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, title = '{{ site.handouts[0] }}', results = 'hide'}
 pred_ppm_xy <- g$krige(
   ppm ~ 1,
   locations = ~ x + y,
@@ -129,20 +133,22 @@ pred_ppm <- sf$st_as_sf(
 And the same commands that joined lead concentrations to census tracts apply to
 joining the predicted concentrations in too.
 
-```{r, title = '{{ site.handouts[0] }}'}
-pred_ppm_tracts <- pred_ppm %>%
+```{r, title = '{{ site.handouts[0] }}', message = FALSE}
+pred_ppm_tracts <-
+  pred_ppm %>%
   sf$st_join(census_tracts) %>%
   sf$st_set_geometry(NULL) %>%
   group_by(TRACT) %>%
   summarise(pred_ppm = mean(var1.pred))
-census_lead_pred_tracts <- census_lead_tracts %>%
-    inner_join(pred_ppm_tracts)
+census_lead_tracts <- 
+  census_lead_tracts %>%
+  inner_join(pred_ppm_tracts)
 ```
 
 ===
 
 ```{r, title = '{{ site.handouts[0] }}'}
-plot(census_lead_pred_tracts[
+plot(census_lead_tracts[
   c('pred_ppm', 'avg_ppm')],
   pal = heat.colors)
 ```
@@ -152,5 +158,5 @@ plot(census_lead_pred_tracts[
 The effect of paying attention to autocorrelation is subtle, but it is noticable and had the expected effect in tract 5800.
 
 ```{r}
-census_lead_pred_tracts[52,]
+census_lead_tracts[52,]
 ```

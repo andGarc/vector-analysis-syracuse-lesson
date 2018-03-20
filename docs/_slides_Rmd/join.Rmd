@@ -6,13 +6,14 @@ editor_options:
 ## Spatial Join
 
 The data about lead contamination in soils is at points; the census information
-is for polygons. One way to join these pieces of information together involves
-finding out which polygon encompases each point.
-{:.notes}
+is for polygons. Combine the information from these tables by determining which
+polygon contains each point.
 
 ```{r, title = '{{ site.handouts[0] }}' }
-plot(census_tracts['POP2000'], pal = cm.colors)
-plot(sf$st_geometry(lead), pch = '.', add = TRUE)
+plot(census_tracts['POP2000'],
+  pal = cm.colors)
+plot(sf$st_geometry(lead),
+  pch = '.', add = TRUE)
 ```
 
 ===
@@ -20,19 +21,20 @@ plot(sf$st_geometry(lead), pch = '.', add = TRUE)
 In the previous section, we performed a table join using a non-spatial
 data type. More specifically, we performed an equality join: records were merged
 wherever the join variable in the "left table" equalled the variable in the
-"right table". Spatial joins operate on the "geometry" column and require
-expanding on the basic equality join to allow several different kinds of matching.
+"right table". Spatial joins operate on the "geometry" columns and require
+expanding beyond equality based matches. Several different kinds of "intersections" can be specified that denote a successful match.
 {:.notes}
 
-![]({{ site.baseurl }}/images/atlassian_workflow.svg){:width="50%"}  
+![]({{ site.baseurl }}/images/TopologicSpatialRelarions2.png){:width="70%"}  
 *[Image][geometry-predicates] by Kraus / [CC BY]*
+{:.captioned}
 
 ===
 
 Before doing any spatial join, it is essential that both tables share a common
 CRS.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, results = 'hide'}
 sf$st_crs(lead)
 sf$st_crs(census_tracts)
 ```
@@ -52,13 +54,14 @@ sf$st_join(lead, census_tracts)
 - Matching defaults to `st_intersects` but permits any predicate function
 
 ```{r}
-sf$st_join(lead, census_tracts, join = st_touches)
+sf$st_join(lead, census_tracts,
+  join = st_contains)
 ```
 
 ===
 
 The population data is at the coarser scale, so the lead ought to be averaged
-within a census tract. Once each lead measurement is joined to a "TRACT" id, the
+within a census tract. Once each lead measurement is joined to "TRACT", the
 spatial data can by dropped.
 
 ```{r, title = '{{ site.handouts[0] }}' }
@@ -69,7 +72,7 @@ lead_tracts <- lead %>%
 
 ===
 
-Two more steps to group the data by TRACT and average the lead concentrations within each TRACT
+Two more steps to group the data by "TRACT" and average the lead concentrations within each "TRACT".
 
 ```{r, title = '{{ site.handouts[0] }}' }
 lead_tracts <- lead %>%
@@ -81,12 +84,13 @@ lead_tracts <- lead %>%
 
 ===
 
-To visualize the average lead concentration from soil samples within each cencus tract, merge the data frame to the `sf` object on the TRACT id.
+To visualize the average lead concentration from soil samples within each cencus tract, merge the data frame to the `sf` object on "TRACT".
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, title = '{{ site.handouts[0] }}', message = FALSE}
 census_lead_tracts <- census_tracts %>%
-    inner_join(lead_tracts)
-plot(census_lead_tracts['avg_ppm'], pal = heat.colors)
+  inner_join(lead_tracts)
+plot(census_lead_tracts['avg_ppm'],
+  pal = heat.colors)
 ```
 
 ===
@@ -98,7 +102,7 @@ A problem with this approach to aggregation is that it ignores autocorrelation. 
 Take a closer look at tract 5800 (in row 52), and notice that several low values are nearly
 stacked on top of eachother.
 
-```{r}
+```{r, eval = FALSE}
 m <- import('mapview')
 m$mapview(sf$st_geometry(census_tracts)) +
   m$mapview(lead['ppm'])

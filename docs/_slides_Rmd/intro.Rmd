@@ -3,16 +3,30 @@
 
 ## Objectives for this lesson
 
-- Meet the "grammar of graphics" for [ggplot2](){:.rpkg}
-- Trust that this is better than base R's `plot`
-- Learn to **layer** visual elements on top of tidy data
-- Glimpse the vast collection of [ggplot2](){:.rpkg} options
+- Dive into scripting vector data operations
+- Learn to handle feature collections like tables
+- Address autocorrelation in point data
+- Glimpse a spatial regression framework
 
 ===
 
 ## Specific achievements
 
-- Create several "aesthetics" or mappings for different plots
-- Build boxplots, scatterplots, smoothed lines and histograms
-- Style plots with colors
-- Repeat plots for different subsets of data
+- Read CSVs and shapefiles
+- Intersect and dissolve geometries
+- Smooth point data with Kriging
+- Include autocorrelation in a regression
+
+===
+
+## Import Clarification
+
+Packages or libraries expand the vocabulary of the R interpreter, sometimes too
+quickly for a user's comfort. The [modules](){:.rlib} library provides an `import`
+command, used throughout this lesson, to help keep tabs the many new commands we
+import.
+
+```{r, title = '{{ site.handouts[0] }}' }
+library('modules')
+import('magrittr', '%>%')
+```

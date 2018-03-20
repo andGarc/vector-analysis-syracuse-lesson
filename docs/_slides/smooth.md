@@ -6,19 +6,19 @@ editor_options:
 ## The Semivariogram
 
 A semivariogram quantifies the effect of distance on the correlation between
-values from different locations. On **average**, measurements of the same variable
+values from different locations. *On average*, measurements of the same variable
 at two nearby locations are more similar (lower variance) than when those locations
 are distant.
 {:.notes}
 
-The [gstat](){:.Rpkg} library, a geospatial analogue to the [stats](){:.Rpkg}
+The [gstat](){:.rlib} library, a geospatial analogue to the [stats](){:.rlib}
 library provides variogram estimation among several additional tools.
 
 
 ~~~r
 g <- import('gstat')
 
-lead_xy <- read.csv('data/Soil_PB.csv')
+lead_xy <- read.csv('data/SYR_soil_PB.csv')
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -60,13 +60,13 @@ plot(v_ppm, v_ppm_fit)
 ===
 
 ## Kriging
-    
-The modeled semivariogram acts as a parameter for fitting a Guassian process, or
-Kriging. The steps to perform Kriging with the [gstat](){:.Rpkg} library are
 
-- [x] Generate a modeled semivariogram
-- [ ] Generate new locations for "predicted" values
-- [ ] Call `krige` with the data, locations, and semivariogram
+The modeled semivariogram acts as a parameter for fitting a Guassian process, or
+Kriging. The steps to perform Kriging with the [gstat](){:.rlib} library are
+
+1. Generate a modeled semivariogram
+1. Generate new locations for "predicted" values
+1. Call `krige` with the data, locations, and semivariogram
 
 ===
 
@@ -79,7 +79,8 @@ Remember, that goal is aggregating lead concentrations within each census tract.
 pred_ppm <- sf$st_make_grid(
   lead, cellsize = 400,
   what = 'centers')
-idx <- unlist(sf$st_intersects(census_tracts, pred_ppm))
+idx <- unlist(
+  sf$st_intersects(census_tracts, pred_ppm))
 pred_ppm <- pred_ppm[idx]
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
@@ -90,10 +91,12 @@ Map the result to verify generated points.
 
 
 ~~~r
-plot(census_tracts['POP2000'], pal = cm.colors)
-plot(pred_ppm, pch = '.', add = TRUE)
+plot(census_tracts['POP2000'],
+  pal = cm.colors)
+plot(pred_ppm,
+  pch = '.', add = TRUE)
 ~~~
-{:.input}
+{:.text-document title="{{ site.handouts[0] }}"}
 
 ![plot of chunk unnamed-chunk-5]({{ site.baseurl }}/images/unnamed-chunk-5-1.png)
 {:.captioned}
@@ -105,23 +108,24 @@ Like the `gstat` function, the `krige` function doesn't work seemlessly with
 
 
 ~~~r
-pred_ppm_xy <- data.frame(do.call(rbind, pred_ppm))
+pred_ppm_xy <- data.frame(
+  do.call(rbind, pred_ppm))
 names(pred_ppm_xy) <- c('x', 'y')
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
 ===
 
-Almost dones ...
+Almost done ...
 
-- [x] Generate a modeled semivariogram
-- [x] Generate new locations for "predicted" values
-- [ ] Call `krige` with the data, locations, and semivariogram
+1. Generate a modeled semivariogram
+1. Generate new locations for "predicted" values
+1. Call `krige` with the data, locations, and semivariogram
 
 ===
 
 The first argument specifies the model for the means, which is constant according to our 
-formula for lead concentrations. The resuly, like the input for locations, is
+formula for lead concentrations. The result, like the input for locations, is
 a data frame with coordinates and a prediction for lead concentrations.
 
 
@@ -132,10 +136,6 @@ pred_ppm_xy <- g$krige(
   data = lead_xy,
   newdata = pred_ppm_xy,
   model = v_ppm_fit)
-~~~
-
-~~~
-[using ordinary kriging]
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -160,24 +160,15 @@ joining the predicted concentrations in too.
 
 
 ~~~r
-pred_ppm_tracts <- pred_ppm %>%
+pred_ppm_tracts <-
+  pred_ppm %>%
   sf$st_join(census_tracts) %>%
   sf$st_set_geometry(NULL) %>%
   group_by(TRACT) %>%
   summarise(pred_ppm = mean(var1.pred))
-~~~
-
-~~~
-Error in group_by(., TRACT): could not find function "group_by"
-~~~
-
-~~~r
-census_lead_pred_tracts <- census_lead_tracts %>%
-    inner_join(pred_ppm_tracts)
-~~~
-
-~~~
-Error in eval(lhs, parent, parent): object 'census_lead_tracts' not found
+census_lead_tracts <- 
+  census_lead_tracts %>%
+  inner_join(pred_ppm_tracts)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -185,15 +176,14 @@ Error in eval(lhs, parent, parent): object 'census_lead_tracts' not found
 
 
 ~~~r
-plot(census_lead_pred_tracts[
+plot(census_lead_tracts[
   c('pred_ppm', 'avg_ppm')],
   pal = heat.colors)
 ~~~
-
-~~~
-Error in plot(census_lead_pred_tracts[c("pred_ppm", "avg_ppm")], pal = heat.colors): object 'census_lead_pred_tracts' not found
-~~~
 {:.text-document title="{{ site.handouts[0] }}"}
+
+![plot of chunk unnamed-chunk-10]({{ site.baseurl }}/images/unnamed-chunk-10-1.png)
+{:.captioned}
 
 ===
 
@@ -201,10 +191,19 @@ The effect of paying attention to autocorrelation is subtle, but it is noticable
 
 
 ~~~r
-census_lead_pred_tracts[52,]
+census_lead_tracts[52,]
 ~~~
 {:.input}
 ~~~
-Error in eval(expr, envir, enclos): object 'census_lead_pred_tracts' not found
+Simple feature collection with 1 feature and 5 fields
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 405633.1 ymin: 4762867 xmax: 406445.9 ymax: 4764711
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+# A tibble: 1 x 6
+  TRACT POP2000 perc_hispa avg_ppm pred_ppm                       geometry
+  <int>   <int>      <dbl>   <dbl>    <dbl>              <sf_geometry [m]>
+1  5800    2715     0.0302    5.44     5.65 POLYGON ((406445.9 4762893,...
 ~~~
 {:.output}

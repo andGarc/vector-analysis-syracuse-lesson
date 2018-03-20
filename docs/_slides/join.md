@@ -6,14 +6,15 @@ editor_options:
 ## Spatial Join
 
 The data about lead contamination in soils is at points; the census information
-is for polygons. One way to join these pieces of information together involves
-finding out which polygon encompases each point.
-{:.notes}
+is for polygons. Combine the information from these tables by determining which
+polygon contains each point.
 
 
 ~~~r
-plot(census_tracts['POP2000'], pal = cm.colors)
-plot(sf$st_geometry(lead), pch = '.', add = TRUE)
+plot(census_tracts['POP2000'],
+  pal = cm.colors)
+plot(sf$st_geometry(lead),
+  pch = '.', add = TRUE)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -25,12 +26,13 @@ plot(sf$st_geometry(lead), pch = '.', add = TRUE)
 In the previous section, we performed a table join using a non-spatial
 data type. More specifically, we performed an equality join: records were merged
 wherever the join variable in the "left table" equalled the variable in the
-"right table". Spatial joins operate on the "geometry" column and require
-expanding on the basic equality join to allow several different kinds of matching.
+"right table". Spatial joins operate on the "geometry" columns and require
+expanding beyond equality based matches. Several different kinds of "intersections" can be specified that denote a successful match.
 {:.notes}
 
-![]({{ site.baseurl }}/images/atlassian_workflow.svg){:width="50%"}  
+![]({{ site.baseurl }}/images/TopologicSpatialRelarions2.png){:width="70%"}  
 *[Image][geometry-predicates] by Kraus / [CC BY]*
+{:.captioned}
 
 ===
 
@@ -40,24 +42,9 @@ CRS.
 
 ~~~r
 sf$st_crs(lead)
-~~~
-
-~~~
-Coordinate Reference System:
-  EPSG: 32618 
-  proj4string: "+proj=utm +zone=18 +datum=WGS84 +units=m +no_defs"
-~~~
-
-~~~r
 sf$st_crs(census_tracts)
 ~~~
-
-~~~
-Coordinate Reference System:
-  EPSG: 32618 
-  proj4string: "+proj=utm +zone=18 +datum=WGS84 +units=m +no_defs"
-~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:.input}
 
 ===
 
@@ -98,7 +85,8 @@ First 10 features:
 
 
 ~~~r
-sf$st_join(lead, census_tracts, join = st_touches)
+sf$st_join(lead, census_tracts,
+  join = st_contains)
 ~~~
 {:.input}
 ~~~
@@ -126,7 +114,7 @@ First 10 features:
 ===
 
 The population data is at the coarser scale, so the lead ought to be averaged
-within a census tract. Once each lead measurement is joined to a "TRACT" id, the
+within a census tract. Once each lead measurement is joined to "TRACT", the
 spatial data can by dropped.
 
 
@@ -139,7 +127,7 @@ lead_tracts <- lead %>%
 
 ===
 
-Two more steps to group the data by TRACT and average the lead concentrations within each TRACT
+Two more steps to group the data by "TRACT" and average the lead concentrations within each "TRACT".
 
 
 ~~~r
@@ -149,34 +137,23 @@ lead_tracts <- lead %>%
     group_by(TRACT) %>%
     summarise(avg_ppm = mean(ppm))
 ~~~
-
-~~~
-Error in group_by(., TRACT): could not find function "group_by"
-~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
 ===
 
-To visualize the average lead concentration from soil samples within each cencus tract, merge the data frame to the `sf` object on the TRACT id.
+To visualize the average lead concentration from soil samples within each cencus tract, merge the data frame to the `sf` object on "TRACT".
 
 
 ~~~r
 census_lead_tracts <- census_tracts %>%
-    inner_join(lead_tracts)
-~~~
-
-~~~
-Error in inner_join(., lead_tracts): could not find function "inner_join"
-~~~
-
-~~~r
-plot(census_lead_tracts['avg_ppm'], pal = heat.colors)
-~~~
-
-~~~
-Error in plot(census_lead_tracts["avg_ppm"], pal = heat.colors): object 'census_lead_tracts' not found
+  inner_join(lead_tracts)
+plot(census_lead_tracts['avg_ppm'],
+  pal = heat.colors)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
+
+![plot of chunk unnamed-chunk-7]({{ site.baseurl }}/images/unnamed-chunk-7-1.png)
+{:.captioned}
 
 ===
 
@@ -194,24 +171,6 @@ m$mapview(sf$st_geometry(census_tracts)) +
   m$mapview(lead['ppm'])
 ~~~
 {:.input}
-~~~
-PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.
-~~~
-{:.input}
-~~~
-Warning in normalizePath(f2): path[1]="./webshot26a45f3c5212.png": No such
-file or directory
-~~~
-{:.input}
-~~~
-Warning in file(con, "rb"): cannot open file './webshot26a45f3c5212.png':
-No such file or directory
-~~~
-{:.input}
-~~~
-Error in file(con, "rb"): cannot open the connection
-~~~
-{:.output}
 
 [geometry-predicates]: https://en.wikipedia.org/wiki/DE-9IM
 [CC BY]: https://creativecommons.org/licenses/by-sa/3.0/

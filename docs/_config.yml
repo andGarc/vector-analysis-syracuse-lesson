@@ -2,7 +2,13 @@
 
 title: Vector Operations in R
 subtitle: Lead Poisoning in Syracuse
-handouts: worksheet.R
+handouts:
+  - worksheet.R
+  - data/bg_00
+  - data/ct_00
+  - data/SYR_census.csv
+  - data/SYR_soil_PB.csv
+  - data/README.md
 tag: v0.0
 lesson: 1
 instructor: Ian Carroll
