@@ -90,8 +90,11 @@ sd$moran.plot(
 There are many ways to use geospatial information about tracts to impose
 assumptions about non-independence between observations in the regression. One
 approach is a Spatial Auto-Regressive (SAR) model, which regresses each value against
-the weighted average of neighbors
+the weighted average of neighbors.
 
+```{r, include = FALSE}
+set.seed(20180402)
+```
 ```{r, title = '{{ site.handouts[0] }}'}
 ppm.sarlm <- sd$lagsarlm(
   pred_ppm ~ perc_hispa,

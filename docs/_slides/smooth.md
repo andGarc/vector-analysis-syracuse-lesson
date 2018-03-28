@@ -203,7 +203,7 @@ epsg (SRID):    32618
 proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 # A tibble: 1 x 6
   TRACT POP2000 perc_hispa avg_ppm pred_ppm                       geometry
-  <int>   <int>      <dbl>   <dbl>    <dbl>              <sf_geometry [m]>
-1  5800    2715     0.0302    5.44     5.65 POLYGON ((406445.9 4762893,...
+  <int>   <int>      <dbl>   <dbl>    <dbl>                  <POLYGON [m]>
+1  5800    2715     0.0302    5.44     5.53 ((406445.9 4762893, 406017.5 ~
 ~~~
 {:.output}
