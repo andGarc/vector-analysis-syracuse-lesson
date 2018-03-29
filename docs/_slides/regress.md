@@ -25,6 +25,7 @@ ppm.lm <- lm(pred_ppm ~ perc_hispa,
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 Is that model any good?
@@ -38,6 +39,7 @@ plot(census_lead_tracts['lm.resid'])
 
 ![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/unnamed-chunk-2-1.png)
 {:.captioned}
+
 
 ===
 
@@ -63,6 +65,7 @@ tracts_nb <- sd$poly2nb(tracts)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 The `neighbors` variable is the network of features sharing a boundary point.
@@ -78,6 +81,7 @@ sd$plot.nb(tracts_nb,
 ![plot of chunk unnamed-chunk-4]({{ site.baseurl }}/images/unnamed-chunk-4-1.png)
 {:.captioned}
 
+
 ===
 
 Reshape the adjacency matrix into a list of neighbors with associated weights.
@@ -87,6 +91,7 @@ Reshape the adjacency matrix into a list of neighbors with associated weights.
 tracts_weight <- sd$nb2listw(tracts_nb)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
+
 
 ===
 
@@ -106,6 +111,7 @@ sd$moran.plot(
 ![plot of chunk unnamed-chunk-6]({{ site.baseurl }}/images/unnamed-chunk-6-1.png)
 {:.captioned}
 
+
 ===
 
 There are many ways to use geospatial information about tracts to impose
@@ -123,6 +129,7 @@ ppm.sarlm <- sd$lagsarlm(
   tol.solve = 1.0e-30)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
+
 
 ===
 
@@ -143,6 +150,7 @@ sd$moran.plot(
 ![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/unnamed-chunk-9-1.png)
 {:.captioned}
 
+
 ===
 
 Feeling more confident in the model, we can now take a look at the regression
@@ -153,6 +161,7 @@ coefficients.
 summary(ppm.sarlm)
 ~~~
 {:.input}
+
 ~~~
 
 Call:
@@ -183,5 +192,6 @@ LM test for residual autocorrelation
 test value: 4.5564, p-value: 0.032797
 ~~~
 {:.output}
+
 
 

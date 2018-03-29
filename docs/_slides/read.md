@@ -19,10 +19,12 @@ lead[['geometry']] <- sf$st_sfc(
 {:.text-document title="{{ site.handouts[0] }}"}
 
 
+
 ~~~r
 head(lead)
 ~~~
 {:.input}
+
 ~~~
          x       y ID      ppm    geometry
 1 408164.3 4762321  0 3.890648 POINT EMPTY
@@ -33,6 +35,7 @@ head(lead)
 6 405644.1 4762037  5 4.681277 POINT EMPTY
 ~~~
 {:.output}
+
 
 ===
 
@@ -57,10 +60,12 @@ lead[[1, 'geometry']] <- sf$st_point(
 {:.text-document title="{{ site.handouts[0] }}"}
 
 
+
 ~~~r
 head(lead)
 ~~~
 {:.input}
+
 ~~~
          x       y ID      ppm                 geometry
 1 408164.3 4762321  0 3.890648 POINT (408164.3 4762321)
@@ -71,6 +76,7 @@ head(lead)
 6 405644.1 4762037  5 4.681277              POINT EMPTY
 ~~~
 {:.output}
+
 
 ===
 
@@ -83,6 +89,7 @@ lead <- sf$st_sf(lead)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 For example, the `print` method automatically shows the CRS and truncates the
@@ -93,6 +100,7 @@ number of records displayed.
 lead
 ~~~
 {:.input}
+
 ~~~
 Simple feature collection with 3149 features and 4 fields (with 3149 geometries empty)
 geometry type:  POINT
@@ -115,6 +123,7 @@ First 10 features:
 ~~~
 {:.output}
 
+
 ===
 
 Naturally, there is a shortcut to creating an `sf` object from a data frame with
@@ -130,10 +139,12 @@ lead <- sf$st_as_sf(lead,
 {:.text-document title="{{ site.handouts[0] }}"}
 
 
+
 ~~~r
 lead
 ~~~
 {:.input}
+
 ~~~
 Simple feature collection with 3149 features and 2 fields
 geometry type:  POINT
@@ -156,6 +167,7 @@ First 10 features:
 ~~~
 {:.output}
 
+
 ===
 
 Now that table is an `sf` object, the data are easilly displayed as a map.
@@ -168,6 +180,7 @@ plot(lead['ppm'])
 
 ![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/unnamed-chunk-9-1.png)
 {:.captioned}
+
 
 ===
 
@@ -185,6 +198,7 @@ blockgroups <- sf$read_sf('data/bg_00')
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 Confirm that the coordinates in the geometry column are the correct UTMs.
@@ -194,6 +208,7 @@ Confirm that the coordinates in the geometry column are the correct UTMs.
 blockgroups
 ~~~
 {:.input}
+
 ~~~
 Simple feature collection with 147 features and 6 fields
 geometry type:  POLYGON
@@ -218,6 +233,7 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 ~~~
 {:.output}
 
+
 Note the table dimensions show 147 features in the collection.
 
 
@@ -225,10 +241,12 @@ Note the table dimensions show 147 features in the collection.
 dim(blockgroups)
 ~~~
 {:.input}
+
 ~~~
 [1] 147   7
 ~~~
 {:.output}
+
 
 ===
 
@@ -239,10 +257,12 @@ Simple feature collections are data frames.
 class(blockgroups)
 ~~~
 {:.input}
+
 ~~~
 [1] "sf"         "tbl_df"     "tbl"        "data.frame"
 ~~~
 {:.output}
+
 
 ===
 
@@ -257,6 +277,7 @@ table operations, like subsetting.
 blockgroups[1:5, 'BKG_KEY']
 ~~~
 {:.input}
+
 ~~~
 Simple feature collection with 5 features and 1 field
 geometry type:  POLYGON
@@ -274,6 +295,7 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 5 360670004004 ((407469 4770033, 407363.9 4770035, 407233.4 4770036, 4072~
 ~~~
 {:.output}
+
 
 ===
 
@@ -298,6 +320,7 @@ plot(blockgroups['Shape_Area'])
 ![plot of chunk unnamed-chunk-15]({{ site.baseurl }}/images/unnamed-chunk-15-1.png)
 {:.captioned}
 
+
 ===
 
 Merging with a regular data frame is done by normal merging non-spatial columns
@@ -309,6 +332,7 @@ census <- read.csv('data/SYR_census.csv')
 census$BKG_KEY <- factor(census$BKG_KEY)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
+
 
 As usual, there's the difficulty that CSV files do not include metadata on data
 types, which have to be set manually.
@@ -331,14 +355,17 @@ census_blockgroups <- inner_join(
 {:.text-document title="{{ site.handouts[0] }}"}
 
 
+
 ~~~r
 class(census_blockgroups)
 ~~~
 {:.input}
+
 ~~~
 [1] "sf"         "tbl_df"     "tbl"        "data.frame"
 ~~~
 {:.output}
+
 
 ===
 
@@ -352,6 +379,7 @@ plot(census_blockgroups['POP2000'])
 
 ![plot of chunk unnamed-chunk-19]({{ site.baseurl }}/images/unnamed-chunk-19-1.png)
 {:.captioned}
+
 
 ===
 
@@ -373,6 +401,7 @@ census_tracts <- census_blockgroups %>%
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 Read in the census tracts from a separate shapefile to confirm that the
@@ -388,6 +417,7 @@ plot(sf$st_geometry(tracts), border = 'red', add = TRUE)
 
 ![plot of chunk unnamed-chunk-21]({{ site.baseurl }}/images/unnamed-chunk-21-1.png)
 {:.captioned}
+
 
 ===
 

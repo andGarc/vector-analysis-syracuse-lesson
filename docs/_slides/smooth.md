@@ -22,6 +22,7 @@ lead_xy <- read.csv('data/SYR_soil_PB.csv')
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 The empirical semivariogram shown below is a windowed average of the squared
@@ -40,6 +41,7 @@ plot(v_ppm)
 ![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/unnamed-chunk-2-1.png)
 {:.captioned}
 
+
 ===
 
 Fitting a model semivariogram tidies up the information about autocorrelation
@@ -56,6 +58,7 @@ plot(v_ppm, v_ppm_fit)
 
 ![plot of chunk unnamed-chunk-3]({{ site.baseurl }}/images/unnamed-chunk-3-1.png)
 {:.captioned}
+
 
 ===
 
@@ -85,6 +88,7 @@ pred_ppm <- pred_ppm[idx]
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 Map the result to verify generated points.
@@ -101,6 +105,7 @@ plot(pred_ppm,
 ![plot of chunk unnamed-chunk-5]({{ site.baseurl }}/images/unnamed-chunk-5-1.png)
 {:.captioned}
 
+
 ===
 
 Like the `gstat` function, the `krige` function doesn't work seemlessly with
@@ -113,6 +118,7 @@ pred_ppm_xy <- data.frame(
 names(pred_ppm_xy) <- c('x', 'y')
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
+
 
 ===
 
@@ -139,6 +145,7 @@ pred_ppm_xy <- g$krige(
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 The same commands that created the `sf` table for lead apply to creating a `sf`
@@ -152,6 +159,7 @@ pred_ppm <- sf$st_as_sf(
   crs = sf$st_crs(lead))
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
+
 
 ===
 
@@ -172,6 +180,7 @@ census_lead_tracts <-
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 
@@ -185,6 +194,7 @@ plot(census_lead_tracts[
 ![plot of chunk unnamed-chunk-10]({{ site.baseurl }}/images/unnamed-chunk-10-1.png)
 {:.captioned}
 
+
 ===
 
 The effect of paying attention to autocorrelation is subtle, but it is noticable and had the expected effect in tract 5800.
@@ -194,6 +204,7 @@ The effect of paying attention to autocorrelation is subtle, but it is noticable
 census_lead_tracts[52,]
 ~~~
 {:.input}
+
 ~~~
 Simple feature collection with 1 feature and 5 fields
 geometry type:  POLYGON
@@ -207,3 +218,4 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 1  5800    2715     0.0302    5.44     5.53 ((406445.9 4762893, 406017.5 ~
 ~~~
 {:.output}
+

@@ -21,6 +21,7 @@ plot(sf$st_geometry(lead),
 ![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-1.png)
 {:.captioned}
 
+
 ===
 
 In the previous section, we performed a table join using a non-spatial
@@ -46,6 +47,7 @@ sf$st_crs(census_tracts)
 ~~~
 {:.input}
 
+
 ===
 
 The `st_join` function performs a left join using the geometries of the two
@@ -56,6 +58,7 @@ simple feature collections.
 sf$st_join(lead, census_tracts)
 ~~~
 {:.input}
+
 ~~~
 Simple feature collection with 3149 features and 5 fields
 geometry type:  POINT
@@ -78,6 +81,7 @@ First 10 features:
 ~~~
 {:.output}
 
+
 ===
 
 - Only the "left" geometry is preserved in the output
@@ -89,6 +93,7 @@ sf$st_join(lead, census_tracts,
   join = st_contains)
 ~~~
 {:.input}
+
 ~~~
 Simple feature collection with 3149 features and 5 fields
 geometry type:  POINT
@@ -111,6 +116,7 @@ First 10 features:
 ~~~
 {:.output}
 
+
 ===
 
 The population data is at the coarser scale, so the lead ought to be averaged
@@ -125,6 +131,7 @@ lead_tracts <- lead %>%
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
+
 ===
 
 Two more steps to group the data by "TRACT" and average the lead concentrations within each "TRACT".
@@ -138,6 +145,7 @@ lead_tracts <- lead %>%
     summarise(avg_ppm = mean(ppm))
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
+
 
 ===
 
@@ -155,6 +163,7 @@ plot(census_lead_tracts['avg_ppm'],
 ![plot of chunk unnamed-chunk-7]({{ site.baseurl }}/images/unnamed-chunk-7-1.png)
 {:.captioned}
 
+
 ===
 
 A problem with this approach to aggregation is that it ignores autocorrelation. Points close to eachother tend to have similar values and shouldn't be given equal weight in averages within a polygon.
@@ -171,6 +180,7 @@ m$mapview(sf$st_geometry(census_tracts)) +
   m$mapview(lead['ppm'])
 ~~~
 {:.input}
+
 
 [geometry-predicates]: https://en.wikipedia.org/wiki/DE-9IM
 [CC BY]: https://creativecommons.org/licenses/by-sa/3.0/
