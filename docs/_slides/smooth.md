@@ -38,7 +38,7 @@ plot(v_ppm)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/smooth/unnamed-chunk-2-1.png)
 {:.captioned}
 
 
@@ -56,7 +56,7 @@ plot(v_ppm, v_ppm_fit)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-3]({{ site.baseurl }}/images/unnamed-chunk-3-1.png)
+![plot of chunk unnamed-chunk-3]({{ site.baseurl }}/images/smooth/unnamed-chunk-3-1.png)
 {:.captioned}
 
 
@@ -102,7 +102,7 @@ plot(pred_ppm,
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-5]({{ site.baseurl }}/images/unnamed-chunk-5-1.png)
+![plot of chunk unnamed-chunk-5]({{ site.baseurl }}/images/smooth/unnamed-chunk-5-1.png)
 {:.captioned}
 
 
@@ -191,7 +191,7 @@ plot(census_lead_tracts[
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-10]({{ site.baseurl }}/images/unnamed-chunk-10-1.png)
+![plot of chunk unnamed-chunk-10]({{ site.baseurl }}/images/smooth/unnamed-chunk-10-1.png)
 {:.captioned}
 
 
@@ -214,8 +214,8 @@ epsg (SRID):    32618
 proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 # A tibble: 1 x 6
   TRACT POP2000 perc_hispa avg_ppm pred_ppm                       geometry
-  <int>   <int>      <dbl>   <dbl>    <dbl>                  <POLYGON [m]>
-1  5800    2715     0.0302    5.44     5.53 ((406445.9 4762893, 406017.5 ~
+  <int>   <int>      <dbl>   <dbl>    <dbl>              <sf_geometry [m]>
+1  5800    2715     0.0302    5.44     5.65 POLYGON ((406445.9 4762893,...
 ~~~
 {:.output}
 

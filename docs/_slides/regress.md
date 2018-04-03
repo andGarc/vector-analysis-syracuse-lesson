@@ -37,7 +37,7 @@ plot(census_lead_tracts['lm.resid'])
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/regress/unnamed-chunk-2-1.png)
 {:.captioned}
 
 
@@ -78,7 +78,7 @@ sd$plot.nb(tracts_nb,
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-4]({{ site.baseurl }}/images/unnamed-chunk-4-1.png)
+![plot of chunk unnamed-chunk-4]({{ site.baseurl }}/images/regress/unnamed-chunk-4-1.png)
 {:.captioned}
 
 
@@ -108,7 +108,7 @@ sd$moran.plot(
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-6]({{ site.baseurl }}/images/unnamed-chunk-6-1.png)
+![plot of chunk unnamed-chunk-6]({{ site.baseurl }}/images/regress/unnamed-chunk-6-1.png)
 {:.captioned}
 
 
@@ -147,7 +147,7 @@ sd$moran.plot(
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/unnamed-chunk-9-1.png)
+![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/regress/unnamed-chunk-9-1.png)
 {:.captioned}
 
 
@@ -170,26 +170,26 @@ sd$lagsarlm(formula = pred_ppm ~ perc_hispa, data = census_lead_tracts,
 
 Residuals:
       Min        1Q    Median        3Q       Max 
--0.992669 -0.210942  0.037845  0.246989  0.888440 
+-1.002799 -0.212714  0.074072  0.235047  0.870624 
 
 Type: lag 
 Coefficients: (asymptotic standard errors) 
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)  1.16047    0.46978  2.4702   0.0135
-perc_hispa   1.45285    0.95717  1.5179   0.1291
+(Intercept)  1.10395    0.45580  2.4220  0.01544
+perc_hispa   1.27550    0.99076  1.2874  0.19795
 
-Rho: 0.7499, LR test value: 22.434, p-value: 2.175e-06
-Asymptotic standard error: 0.095079
-    z-value: 7.8871, p-value: 3.1086e-15
-Wald statistic: 62.207, p-value: 3.1086e-15
+Rho: 0.76278, LR test value: 23.183, p-value: 1.473e-06
+Asymptotic standard error: 0.092139
+    z-value: 8.2786, p-value: 2.2204e-16
+Wald statistic: 68.535, p-value: < 2.22e-16
 
-Log likelihood: -29.16485 for lag model
-ML residual variance (sigma squared): 0.14018, (sigma: 0.37441)
+Log likelihood: -31.49178 for lag model
+ML residual variance (sigma squared): 0.15101, (sigma: 0.3886)
 Number of observations: 57 
 Number of parameters estimated: 4 
-AIC: 66.33, (AIC for lm: 86.764)
+AIC: 70.984, (AIC for lm: 92.166)
 LM test for residual autocorrelation
-test value: 4.5564, p-value: 0.032797
+test value: 5.5923, p-value: 0.01804
 ~~~
 {:.output}
 
