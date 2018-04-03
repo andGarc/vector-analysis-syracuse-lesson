@@ -18,7 +18,7 @@ plot(sf$st_geometry(lead),
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/unnamed-chunk-1-1.png)
+![plot of chunk unnamed-chunk-1]({{ site.baseurl }}/images/join/unnamed-chunk-1-1.png)
 {:.captioned}
 
 
@@ -160,7 +160,7 @@ plot(census_lead_tracts['avg_ppm'],
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-7]({{ site.baseurl }}/images/unnamed-chunk-7-1.png)
+![plot of chunk unnamed-chunk-7]({{ site.baseurl }}/images/join/unnamed-chunk-7-1.png)
 {:.captioned}
 
 

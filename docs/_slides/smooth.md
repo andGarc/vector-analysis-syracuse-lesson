@@ -38,7 +38,7 @@ plot(v_ppm)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/smooth/unnamed-chunk-2-1.png)
 {:.captioned}
 
 
@@ -56,7 +56,7 @@ plot(v_ppm, v_ppm_fit)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-3]({{ site.baseurl }}/images/unnamed-chunk-3-1.png)
+![plot of chunk unnamed-chunk-3]({{ site.baseurl }}/images/smooth/unnamed-chunk-3-1.png)
 {:.captioned}
 
 
@@ -102,7 +102,7 @@ plot(pred_ppm,
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-5]({{ site.baseurl }}/images/unnamed-chunk-5-1.png)
+![plot of chunk unnamed-chunk-5]({{ site.baseurl }}/images/smooth/unnamed-chunk-5-1.png)
 {:.captioned}
 
 
@@ -191,7 +191,7 @@ plot(census_lead_tracts[
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-10]({{ site.baseurl }}/images/unnamed-chunk-10-1.png)
+![plot of chunk unnamed-chunk-10]({{ site.baseurl }}/images/smooth/unnamed-chunk-10-1.png)
 {:.captioned}
 
 

@@ -178,7 +178,7 @@ plot(lead['ppm'])
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/unnamed-chunk-9-1.png)
+![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/read/unnamed-chunk-9-1.png)
 {:.captioned}
 
 
@@ -317,7 +317,7 @@ plot(blockgroups['Shape_Area'])
 ~~~
 {:.input}
 
-![plot of chunk unnamed-chunk-15]({{ site.baseurl }}/images/unnamed-chunk-15-1.png)
+![plot of chunk unnamed-chunk-15]({{ site.baseurl }}/images/read/unnamed-chunk-15-1.png)
 {:.captioned}
 
 
@@ -377,7 +377,7 @@ plot(census_blockgroups['POP2000'])
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-19]({{ site.baseurl }}/images/unnamed-chunk-19-1.png)
+![plot of chunk unnamed-chunk-19]({{ site.baseurl }}/images/read/unnamed-chunk-19-1.png)
 {:.captioned}
 
 
@@ -415,7 +415,7 @@ plot(sf$st_geometry(tracts), border = 'red', add = TRUE)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-21]({{ site.baseurl }}/images/unnamed-chunk-21-1.png)
+![plot of chunk unnamed-chunk-21]({{ site.baseurl }}/images/read/unnamed-chunk-21-1.png)
 {:.captioned}
 
 

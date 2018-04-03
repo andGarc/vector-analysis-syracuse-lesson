@@ -37,7 +37,7 @@ plot(census_lead_tracts['lm.resid'])
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/regress/unnamed-chunk-2-1.png)
 {:.captioned}
 
 
@@ -78,7 +78,7 @@ sd$plot.nb(tracts_nb,
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-4]({{ site.baseurl }}/images/unnamed-chunk-4-1.png)
+![plot of chunk unnamed-chunk-4]({{ site.baseurl }}/images/regress/unnamed-chunk-4-1.png)
 {:.captioned}
 
 
@@ -108,7 +108,7 @@ sd$moran.plot(
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-6]({{ site.baseurl }}/images/unnamed-chunk-6-1.png)
+![plot of chunk unnamed-chunk-6]({{ site.baseurl }}/images/regress/unnamed-chunk-6-1.png)
 {:.captioned}
 
 
@@ -147,7 +147,7 @@ sd$moran.plot(
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
-![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/unnamed-chunk-9-1.png)
+![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/regress/unnamed-chunk-9-1.png)
 {:.captioned}
 
 
