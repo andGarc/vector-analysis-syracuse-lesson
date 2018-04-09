@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vector Operations in R</title>
+<meta name="description" content="Learn to manipulate vector data (on contaminated soil in Syracuse, NY).">
+<link rel="canonical" href="http://cyberhelp.sesync.org/vector-analysis-syracuse-lesson/course/archive.html">
+<link rel="stylesheet" href="https://cdn.rawgit.com/sesync-ci/lesson-style/v1.3/docs/css/default.css">
+<link rel="stylesheet" href="https://cdn.rawgit.com/sesync-ci/lesson-style/v1.3/docs/css/static.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script>
+
+  </head>
+  <body>
+    <div class="page-content">
+      <div class="wrapper">
+        
+        
+<h1 style="text-transform: none;" id="vector-operations-in-r">Vector Operations in R</h1>
+
+<h2 style="text-transform: none;" id="lead-poisoning-in-syracuse">Lead Poisoning in Syracuse</h2>
+
+<p>Lesson 1 with <em>Ian Carroll</em></p>
+
+<h2 id="contents">Contents</h2>
+
+<ul>
+  <li><a href="#/slides/intro">Objectives for this lesson</a></li>
+  <li><a href="#/slides/read">Simple Features</a></li>
+  <li><a href="#/slides/join">Spatial Join</a></li>
+  <li><a href="#/slides/smooth">The Semivariogram</a></li>
+  <li><a href="#/slides/regress">Regression</a></li>
+  <li><a href="#/slides/conclude">Summary</a></li>
+</ul>
+
+<hr />
+
+<p><a name="/slides/intro"></a></p>
+
+<h2 id="objectives-for-this-lesson">Objectives for this lesson</h2>
+
+<ul>
+  <li>Dive into scripting vector data operations</li>
+  <li>Learn to handle feature collections like tables</li>
+  <li>Address autocorrelation in point data</li>
+  <li>Glimpse a spatial regression framework</li>
+</ul>
+
+<h2 id="specific-achievements">Specific achievements</h2>
+
+<ul>
+  <li>Read CSVs and shapefiles</li>
+  <li>Intersect and dissolve geometries</li>
+  <li>Smooth point data with Kriging</li>
+  <li>Include autocorrelation in a regression</li>
+</ul>
+
+<h2 id="import-clarification">Import Clarification</h2>
+
+<p>Packages or libraries expand the vocabulary of the R interpreter, sometimes too
+quickly for a user’s comfort. The <a href="" class="rlib">modules</a> library provides an <code class="highlighter-rouge">import</code>
+command, used throughout this lesson, to help keep tabs the many new commands we
+import.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="s1">'modules'</span><span class="p">)</span><span class="w">
+</span><span class="n">import</span><span class="p">(</span><span class="s1">'magrittr'</span><span class="p">,</span><span class="w"> </span><span class="s1">'%&gt;%'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="ToS"><a href="#/slides/intro">Top of Section</a></p>
+
+<hr />
+
+<p><a name="/slides/read"></a></p>
+
+<h2 id="simple-features">Simple Features</h2>
+
+<p>A standardized set of geometric shapes are the essense of vector data, but these are next to useless outside a tabular structure.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">sf</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">import</span><span class="p">(</span><span class="s1">'sf'</span><span class="p">)</span><span class="w">
+
+</span><span class="n">lead</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.csv</span><span class="p">(</span><span class="s1">'data/SYR_soil_PB.csv'</span><span class="p">)</span><span class="w">
+</span><span class="n">lead</span><span class="p">[[</span><span class="s1">'geometry'</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">st_sfc</span><span class="p">(</span><span class="w">
+  </span><span class="n">sf</span><span class="o">$</span><span class="n">st_point</span><span class="p">(),</span><span class="w">
+  </span><span class="n">crs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">32618</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">head</span><span class="p">(</span><span class="n">lead</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>         x       y ID      ppm    geometry
+1 408164.3 4762321  0 3.890648 POINT EMPTY
+2 405914.9 4767394  1 4.899391 POINT EMPTY
+3 405724.0 4767706  2 4.434912 POINT EMPTY
+4 406702.8 4769201  3 5.285548 POINT EMPTY
+5 405392.3 4765598  4 5.295919 POINT EMPTY
+6 405644.1 4762037  5 4.681277 POINT EMPTY
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>geometry</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">st_point</code></td>
+      <td>a single point</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">st_linestring</code></td>
+      <td>sequence of points connected by straight, non-self intersecting line pieces</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">st_polygon</code></td>
+      <td>one [or more] sequences of points in a closed, non-self intersecting ring [with holes]</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">st_multi*</code></td>
+      <td>sequence of <code class="highlighter-rouge">*</code>, either <code class="highlighter-rouge">point</code>, <code class="highlighter-rouge">linestring</code>, or <code class="highlighter-rouge">polygon</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Each element of the simple feature column is a simple feature geometry, here
+created from the “x” and “y” elements of a given feature.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">lead</span><span class="p">[[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s1">'geometry'</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">st_point</span><span class="p">(</span><span class="w">
+  </span><span class="nf">c</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lead</span><span class="p">[[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s1">'x'</span><span class="p">]],</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lead</span><span class="p">[[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s1">'y'</span><span class="p">]]),</span><span class="w">
+  </span><span class="n">dim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'XY'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">head</span><span class="p">(</span><span class="n">lead</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>         x       y ID      ppm                 geometry
+1 408164.3 4762321  0 3.890648 POINT (408164.3 4762321)
+2 405914.9 4767394  1 4.899391              POINT EMPTY
+3 405724.0 4767706  2 4.434912              POINT EMPTY
+4 406702.8 4769201  3 5.285548              POINT EMPTY
+5 405392.3 4765598  4 5.295919              POINT EMPTY
+6 405644.1 4762037  5 4.681277              POINT EMPTY
+</code></pre></div></div>
+
+<p>The whole data frame must be cast to a simple feature object, which causes
+functions like <code class="highlighter-rouge">print</code> and <code class="highlighter-rouge">plot</code> to use methods introduced by the <code class="highlighter-rouge">sf</code> library.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">lead</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">st_sf</span><span class="p">(</span><span class="n">lead</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>For example, the <code class="highlighter-rouge">print</code> method automatically shows the CRS and truncates the
+number of records displayed.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lead</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Simple feature collection with 3149 features and 4 fields (with 3149 geometries empty)
+geometry type:  POINT
+dimension:      XY
+bbox:           xmin: 408164.3 ymin: 4762321 xmax: 408164.3 ymax: 4762321
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+First 10 features:
+          x       y ID      ppm                 geometry
+1  408164.3 4762321  0 3.890648 POINT (408164.3 4762321)
+2  405914.9 4767394  1 4.899391              POINT EMPTY
+3  405724.0 4767706  2 4.434912              POINT EMPTY
+4  406702.8 4769201  3 5.285548              POINT EMPTY
+5  405392.3 4765598  4 5.295919              POINT EMPTY
+6  405644.1 4762037  5 4.681277              POINT EMPTY
+7  409183.1 4763057  6 3.364148              POINT EMPTY
+8  407945.4 4770014  7 4.096946              POINT EMPTY
+9  406341.4 4762603  8 4.689880              POINT EMPTY
+10 404638.1 4767636  9 5.422257              POINT EMPTY
+</code></pre></div></div>
+
+<p>Naturally, there is a shortcut to creating an <code class="highlighter-rouge">sf</code> object from a data frame with
+point coordinates. The CRS must be specified via EPSG integer or proj4 string.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">lead</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.csv</span><span class="p">(</span><span class="s1">'data/SYR_soil_PB.csv'</span><span class="p">)</span><span class="w">
+</span><span class="n">lead</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">st_as_sf</span><span class="p">(</span><span class="n">lead</span><span class="p">,</span><span class="w">
+  </span><span class="n">coords</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span><span class="w"> </span><span class="s1">'y'</span><span class="p">),</span><span class="w">
+  </span><span class="n">crs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">32618</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lead</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Simple feature collection with 3149 features and 2 fields
+geometry type:  POINT
+dimension:      XY
+bbox:           xmin: 401993 ymin: 4759765 xmax: 412469 ymax: 4770955
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+First 10 features:
+   ID      ppm                 geometry
+1   0 3.890648 POINT (408164.3 4762321)
+2   1 4.899391 POINT (405914.9 4767394)
+3   2 4.434912   POINT (405724 4767706)
+4   3 5.285548 POINT (406702.8 4769201)
+5   4 5.295919 POINT (405392.3 4765598)
+6   5 4.681277 POINT (405644.1 4762037)
+7   6 3.364148 POINT (409183.1 4763057)
+8   7 4.096946 POINT (407945.4 4770014)
+9   8 4.689880 POINT (406341.4 4762603)
+10  9 5.422257 POINT (404638.1 4767636)
+</code></pre></div></div>
+
+<p>Now that table is an <code class="highlighter-rouge">sf</code> object, the data are easilly displayed as a map.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">lead</span><span class="p">[</span><span class="s1">'ppm'</span><span class="p">])</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" /></p>
+
+<h2 id="feature-collections">Feature Collections</h2>
+
+<p class="notes">More complicated geometries are usually not stored in CSV files, but they are
+usually still read as tabular data. We will see that the similarity of feature
+collections to non-spatial tabular data goes quite far; the usual data
+manipulations done on tabular data work just as well on <code class="highlighter-rouge">sf</code> objects.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">blockgroups</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">read_sf</span><span class="p">(</span><span class="s1">'data/bg_00'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Confirm that the coordinates in the geometry column are the correct UTMs.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">blockgroups</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Simple feature collection with 147 features and 6 fields
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 401938.3 ymin: 4759734 xmax: 412486.4 ymax: 4771049
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+# A tibble: 147 x 7
+   BKG_KEY      Shape_Leng Shape_Area BKG_KEY_1    Shape_Le_1 Shape_Ar_1
+   &lt;chr&gt;             &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt;      &lt;dbl&gt;
+ 1 360670001001     13520.   6135184. 360670001001     13520.   6135184.
+ 2 360670003002      2547.    301840. 360670003002      2547.    301840.
+ 3 360670003001      2678.    250998. 360670003001      2678.    250998.
+ 4 360670002001      3392.    656276. 360670002001      3392.    656276.
+ 5 360670004004      2224.    301086. 360670004004      2224.    301086.
+ 6 360670004001      3263.    606495. 360670004001      3263.    606495.
+ 7 360670004003      2878.    274532. 360670004003      2878.    274532.
+ 8 360670004002      3606.    331035. 360670004002      3606.    331035.
+ 9 360670010001      2951.    376786. 360670010001      2951.    376786.
+10 360670010003      2868.    265836. 360670010003      2868.    265836.
+# ... with 137 more rows, and 1 more variable: geometry &lt;sf_geometry [m]&gt;
+</code></pre></div></div>
+
+<p>Note the table dimensions show 147 features in the collection.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">dim</span><span class="p">(</span><span class="n">blockgroups</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 147   7
+</code></pre></div></div>
+
+<p>Simple feature collections are data frames.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">class</span><span class="p">(</span><span class="n">blockgroups</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "sf"         "tbl_df"     "tbl"        "data.frame"
+</code></pre></div></div>
+
+<p class="notes">The <code class="highlighter-rouge">blockgroups</code> object is a <code class="highlighter-rouge">data.frame</code>, but it also has the class attribute
+of <code class="highlighter-rouge">sf</code>. This additional class extends the <code class="highlighter-rouge">data.frame</code> class in ways useful for
+feature collection. For instance, the geometry column becomes “sticky” in most
+table operations, like subsetting.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">blockgroups</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="s1">'BKG_KEY'</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Simple feature collection with 5 features and 1 field
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 402304.2 ymin: 4767421 xmax: 407469 ymax: 4771049
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+# A tibble: 5 x 2
+  BKG_KEY                            geometry
+  &lt;chr&gt;                     &lt;sf_geometry [m]&gt;
+1 360670001001 POLYGON ((403476.4 4767682,...
+2 360670003002 POLYGON ((406271.7 4770188,...
+3 360670003001 POLYGON ((406730.3 4770235,...
+4 360670002001 POLYGON ((406436.1 4770029,...
+5 360670004004 POLYGON ((407469 4770033, 4...
+</code></pre></div></div>
+
+<h2 id="table-operations">Table Operations</h2>
+
+<ul>
+  <li>plot</li>
+  <li>merge or join</li>
+  <li>“split-apply-combine” or group-by and summarize</li>
+</ul>
+
+<p>In the <code class="highlighter-rouge">plot</code> method for feature collections, the “x” in the usual <code class="highlighter-rouge">plot(x,
+y, ...)</code> automatically takes the sticky “geometry” column and the type of plot
+is assumed to be a map. Only the “y” needs to be specified.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">blockgroups</span><span class="p">[</span><span class="s1">'Shape_Area'</span><span class="p">])</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-15-1.png" alt="plot of chunk unnamed-chunk-15" /></p>
+
+<p>Merging with a regular data frame is done by normal merging non-spatial columns
+found in both tables.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">census</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.csv</span><span class="p">(</span><span class="s1">'data/SYR_census.csv'</span><span class="p">)</span><span class="w">
+</span><span class="n">census</span><span class="o">$</span><span class="n">BKG_KEY</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">factor</span><span class="p">(</span><span class="n">census</span><span class="o">$</span><span class="n">BKG_KEY</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="notes">As usual, there’s the difficulty that CSV files do not include metadata on data
+types, which have to be set manually.</p>
+
+<p>Merge tables on a unique identifier (our primary key is “BKG_KEY”), but let the
+“sf” object come first or is special attributes get lost.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">import</span><span class="p">(</span><span class="s1">'dplyr'</span><span class="p">,</span><span class="w"> 
+  </span><span class="s1">'inner_join'</span><span class="p">,</span><span class="w"> </span><span class="s1">'group_by'</span><span class="p">,</span><span class="w"> </span><span class="s1">'summarise'</span><span class="p">)</span><span class="w">
+
+</span><span class="n">census_blockgroups</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">inner_join</span><span class="p">(</span><span class="w">
+  </span><span class="n">blockgroups</span><span class="p">,</span><span class="w"> </span><span class="n">census</span><span class="p">,</span><span class="w">
+  </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'BKG_KEY'</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">class</span><span class="p">(</span><span class="n">census_blockgroups</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "sf"         "tbl_df"     "tbl"        "data.frame"
+</code></pre></div></div>
+
+<p>The census data is now easily vizualized as a map.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">census_blockgroups</span><span class="p">[</span><span class="s1">'POP2000'</span><span class="p">])</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-19-1.png" alt="plot of chunk unnamed-chunk-19" /></p>
+
+<p>Feature collections also cooperate with the common “split-apply-combine” sequence of steps in data manipulation.</p>
+
+<ul>
+  <li><em>split</em> – group the features by some factor</li>
+  <li><em>apply</em> – apply a function that summarizes each subset, including their geometries</li>
+  <li><em>combine</em> – return the results as columns of a new feature collection</li>
+</ul>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">census_tracts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">census_blockgroups</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">group_by</span><span class="p">(</span><span class="n">TRACT</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">summarise</span><span class="p">(</span><span class="w">
+    </span><span class="n">POP2000</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">POP2000</span><span class="p">),</span><span class="w">
+    </span><span class="n">perc_hispa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">HISPANIC</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">POP2000</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Read in the census tracts from a separate shapefile to confirm that the
+boundaries were dissolved as expected.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">tracts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">read_sf</span><span class="p">(</span><span class="s1">'data/ct_00'</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">[</span><span class="s1">'POP2000'</span><span class="p">])</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">sf</span><span class="o">$</span><span class="n">st_geometry</span><span class="p">(</span><span class="n">tracts</span><span class="p">),</span><span class="w"> </span><span class="n">border</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'red'</span><span class="p">,</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-21-1.png" alt="plot of chunk unnamed-chunk-21" /></p>
+
+<p>By default, the sticky geometries are summarized with <code class="highlighter-rouge">st_union</code>. The
+alternative <code class="highlighter-rouge">st_combine</code> does not dissolve internal boundaries. Check
+<code class="highlighter-rouge">?summarise.sf</code> for more details.</p>
+
+<p class="ToS"><a href="#/slides/read">Top of Section</a></p>
+
+<hr />
+
+<p><a name="/slides/join"></a></p>
+
+<h2 id="spatial-join">Spatial Join</h2>
+
+<p>The data about lead contamination in soils is at points; the census information
+is for polygons. Combine the information from these tables by determining which
+polygon contains each point.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">[</span><span class="s1">'POP2000'</span><span class="p">],</span><span class="w">
+  </span><span class="n">pal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cm.colors</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">sf</span><span class="o">$</span><span class="n">st_geometry</span><span class="p">(</span><span class="n">lead</span><span class="p">),</span><span class="w">
+  </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'.'</span><span class="p">,</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/join/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1" /></p>
+
+<p class="notes">In the previous section, we performed a table join using a non-spatial
+data type. More specifically, we performed an equality join: records were merged
+wherever the join variable in the “left table” equalled the variable in the
+“right table”. Spatial joins operate on the “geometry” columns and require
+expanding beyond equality based matches. Several different kinds of “intersections” can be specified that denote a successful match.</p>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/TopologicSpatialRelarions2.png" alt="" width="70%" /><br />
+<em><a href="https://en.wikipedia.org/wiki/DE-9IM">Image</a> by Kraus / <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY</a></em></p>
+
+<p>Before doing any spatial join, it is essential that both tables share a common
+CRS.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sf</span><span class="o">$</span><span class="n">st_crs</span><span class="p">(</span><span class="n">lead</span><span class="p">)</span><span class="w">
+</span><span class="n">sf</span><span class="o">$</span><span class="n">st_crs</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">st_join</code> function performs a left join using the geometries of the two
+simple feature collections.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sf</span><span class="o">$</span><span class="n">st_join</span><span class="p">(</span><span class="n">lead</span><span class="p">,</span><span class="w"> </span><span class="n">census_tracts</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Simple feature collection with 3149 features and 5 fields
+geometry type:  POINT
+dimension:      XY
+bbox:           xmin: 401993 ymin: 4759765 xmax: 412469 ymax: 4770955
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+First 10 features:
+   ID      ppm TRACT POP2000 perc_hispa                 geometry
+1   0 3.890648  6102    2154 0.01578459 POINT (408164.3 4762321)
+2   1 4.899391  3200    2444 0.10515548 POINT (405914.9 4767394)
+3   2 4.434912   100     393 0.03053435   POINT (405724 4767706)
+4   3 5.285548   700    1630 0.03190184 POINT (406702.8 4769201)
+5   4 5.295919  3900    4405 0.23541430 POINT (405392.3 4765598)
+6   5 4.681277  6000    3774 0.04027557 POINT (405644.1 4762037)
+7   6 3.364148  5602    2212 0.08318264 POINT (409183.1 4763057)
+8   7 4.096946   400    3630 0.01019284 POINT (407945.4 4770014)
+9   8 4.689880  6000    3774 0.04027557 POINT (406341.4 4762603)
+10  9 5.422257  2100    1734 0.09169550 POINT (404638.1 4767636)
+</code></pre></div></div>
+
+<ul>
+  <li>Only the “left” geometry is preserved in the output</li>
+  <li>Matching defaults to <code class="highlighter-rouge">st_intersects</code> but permits any predicate function</li>
+</ul>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sf</span><span class="o">$</span><span class="n">st_join</span><span class="p">(</span><span class="n">lead</span><span class="p">,</span><span class="w"> </span><span class="n">census_tracts</span><span class="p">,</span><span class="w">
+  </span><span class="n">join</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st_contains</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Simple feature collection with 3149 features and 5 fields
+geometry type:  POINT
+dimension:      XY
+bbox:           xmin: 401993 ymin: 4759765 xmax: 412469 ymax: 4770955
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+First 10 features:
+   ID      ppm TRACT POP2000 perc_hispa                 geometry
+1   0 3.890648    NA      NA         NA POINT (408164.3 4762321)
+2   1 4.899391    NA      NA         NA POINT (405914.9 4767394)
+3   2 4.434912    NA      NA         NA   POINT (405724 4767706)
+4   3 5.285548    NA      NA         NA POINT (406702.8 4769201)
+5   4 5.295919    NA      NA         NA POINT (405392.3 4765598)
+6   5 4.681277    NA      NA         NA POINT (405644.1 4762037)
+7   6 3.364148    NA      NA         NA POINT (409183.1 4763057)
+8   7 4.096946    NA      NA         NA POINT (407945.4 4770014)
+9   8 4.689880    NA      NA         NA POINT (406341.4 4762603)
+10  9 5.422257    NA      NA         NA POINT (404638.1 4767636)
+</code></pre></div></div>
+
+<p>The population data is at the coarser scale, so the lead ought to be averaged
+within a census tract. Once each lead measurement is joined to “TRACT”, the
+spatial data can by dropped.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">lead_tracts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lead</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">sf</span><span class="o">$</span><span class="n">st_join</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">sf</span><span class="o">$</span><span class="n">st_set_geometry</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Two more steps to group the data by “TRACT” and average the lead concentrations within each “TRACT”.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">lead_tracts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lead</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">sf</span><span class="o">$</span><span class="n">st_join</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">sf</span><span class="o">$</span><span class="n">st_set_geometry</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">group_by</span><span class="p">(</span><span class="n">TRACT</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">summarise</span><span class="p">(</span><span class="n">avg_ppm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">ppm</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>To visualize the average lead concentration from soil samples within each cencus tract, merge the data frame to the <code class="highlighter-rouge">sf</code> object on “TRACT”.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">census_lead_tracts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">census_tracts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">inner_join</span><span class="p">(</span><span class="n">lead_tracts</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">census_lead_tracts</span><span class="p">[</span><span class="s1">'avg_ppm'</span><span class="p">],</span><span class="w">
+  </span><span class="n">pal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heat.colors</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/join/unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7" /></p>
+
+<p>A problem with this approach to aggregation is that it ignores autocorrelation. Points close to eachother tend to have similar values and shouldn’t be given equal weight in averages within a polygon.</p>
+
+<p>Take a closer look at tract 5800 (in row 52), and notice that several low values are nearly
+stacked on top of eachother.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">m</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">import</span><span class="p">(</span><span class="s1">'mapview'</span><span class="p">)</span><span class="w">
+</span><span class="n">m</span><span class="o">$</span><span class="n">mapview</span><span class="p">(</span><span class="n">sf</span><span class="o">$</span><span class="n">st_geometry</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">m</span><span class="o">$</span><span class="n">mapview</span><span class="p">(</span><span class="n">lead</span><span class="p">[</span><span class="s1">'ppm'</span><span class="p">])</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="ToS"><a href="#/slides/join">Top of Section</a></p>
+
+<hr />
+
+<p><a name="/slides/smooth"></a></p>
+
+<h2 id="the-semivariogram">The Semivariogram</h2>
+
+<p class="notes">A semivariogram quantifies the effect of distance on the correlation between
+values from different locations. <em>On average</em>, measurements of the same variable
+at two nearby locations are more similar (lower variance) than when those locations
+are distant.</p>
+
+<p>The <a href="" class="rlib">gstat</a> library, a geospatial analogue to the <a href="" class="rlib">stats</a>
+library provides variogram estimation among several additional tools.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">g</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">import</span><span class="p">(</span><span class="s1">'gstat'</span><span class="p">)</span><span class="w">
+
+</span><span class="n">lead_xy</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.csv</span><span class="p">(</span><span class="s1">'data/SYR_soil_PB.csv'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The empirical semivariogram shown below is a windowed average of the squared
+difference in lead concentrations beween sample points.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">v_ppm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">g</span><span class="o">$</span><span class="n">variogram</span><span class="p">(</span><span class="w">
+  </span><span class="n">ppm</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
+  </span><span class="n">locations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lead_xy</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">v_ppm</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
+
+<p>Fitting a model semivariogram tidies up the information about autocorrelation
+in the data, so we can use it for interpolation.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">v_ppm_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">g</span><span class="o">$</span><span class="n">fit.variogram</span><span class="p">(</span><span class="w">
+  </span><span class="n">v_ppm</span><span class="p">,</span><span class="w">
+  </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">g</span><span class="o">$</span><span class="n">vgm</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s2">"Sph"</span><span class="p">,</span><span class="w"> </span><span class="m">900</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">v_ppm</span><span class="p">,</span><span class="w"> </span><span class="n">v_ppm_fit</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" /></p>
+
+<h2 id="kriging">Kriging</h2>
+
+<p>The modeled semivariogram acts as a parameter for fitting a Guassian process, or
+Kriging. The steps to perform Kriging with the <a href="" class="rlib">gstat</a> library are</p>
+
+<ol>
+  <li>Generate a modeled semivariogram</li>
+  <li>Generate new locations for “predicted” values</li>
+  <li>Call <code class="highlighter-rouge">krige</code> with the data, locations, and semivariogram</li>
+</ol>
+
+<p>Generate a low resolution (for demonstration) grid of points overlaying the
+bounding box for the lead data and trim it down to the polygons of interest.
+Remember, that goal is aggregating lead concentrations within each census tract.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">pred_ppm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">st_make_grid</span><span class="p">(</span><span class="w">
+  </span><span class="n">lead</span><span class="p">,</span><span class="w"> </span><span class="n">cellsize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w">
+  </span><span class="n">what</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'centers'</span><span class="p">)</span><span class="w">
+</span><span class="n">idx</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">unlist</span><span class="p">(</span><span class="w">
+  </span><span class="n">sf</span><span class="o">$</span><span class="n">st_intersects</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">,</span><span class="w"> </span><span class="n">pred_ppm</span><span class="p">))</span><span class="w">
+</span><span class="n">pred_ppm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pred_ppm</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Map the result to verify generated points.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">[</span><span class="s1">'POP2000'</span><span class="p">],</span><span class="w">
+  </span><span class="n">pal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cm.colors</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">pred_ppm</span><span class="p">,</span><span class="w">
+  </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'.'</span><span class="p">,</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
+
+<p>Like the <code class="highlighter-rouge">gstat</code> function, the <code class="highlighter-rouge">krige</code> function doesn’t work seemlessly with
+<code class="highlighter-rouge">sf</code> objects, so again create a data frame with coordinates.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">pred_ppm_xy</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="w">
+  </span><span class="n">do.call</span><span class="p">(</span><span class="n">rbind</span><span class="p">,</span><span class="w"> </span><span class="n">pred_ppm</span><span class="p">))</span><span class="w">
+</span><span class="nf">names</span><span class="p">(</span><span class="n">pred_ppm_xy</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span><span class="w"> </span><span class="s1">'y'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Almost done …</p>
+
+<ol>
+  <li>Generate a modeled semivariogram</li>
+  <li>Generate new locations for “predicted” values</li>
+  <li>Call <code class="highlighter-rouge">krige</code> with the data, locations, and semivariogram</li>
+</ol>
+
+<p>The first argument specifies the model for the means, which is constant according to our 
+formula for lead concentrations. The result, like the input for locations, is
+a data frame with coordinates and a prediction for lead concentrations.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">pred_ppm_xy</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">g</span><span class="o">$</span><span class="n">krige</span><span class="p">(</span><span class="w">
+  </span><span class="n">ppm</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
+  </span><span class="n">locations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lead_xy</span><span class="p">,</span><span class="w">
+  </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pred_ppm_xy</span><span class="p">,</span><span class="w">
+  </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v_ppm_fit</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The same commands that created the <code class="highlighter-rouge">sf</code> table for lead apply to creating a <code class="highlighter-rouge">sf</code>
+table for the predicted concentrations.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">pred_ppm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">st_as_sf</span><span class="p">(</span><span class="w">
+  </span><span class="n">pred_ppm_xy</span><span class="p">,</span><span class="w">
+  </span><span class="n">coords</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span><span class="w"> </span><span class="s1">'y'</span><span class="p">),</span><span class="w">
+  </span><span class="n">crs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sf</span><span class="o">$</span><span class="n">st_crs</span><span class="p">(</span><span class="n">lead</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>And the same commands that joined lead concentrations to census tracts apply to
+joining the predicted concentrations in too.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">pred_ppm_tracts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+  </span><span class="n">pred_ppm</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">sf</span><span class="o">$</span><span class="n">st_join</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">sf</span><span class="o">$</span><span class="n">st_set_geometry</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">group_by</span><span class="p">(</span><span class="n">TRACT</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">summarise</span><span class="p">(</span><span class="n">pred_ppm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">var1.pred</span><span class="p">))</span><span class="w">
+</span><span class="n">census_lead_tracts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> 
+  </span><span class="n">census_lead_tracts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">inner_join</span><span class="p">(</span><span class="n">pred_ppm_tracts</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">census_lead_tracts</span><span class="p">[</span><span class="w">
+  </span><span class="nf">c</span><span class="p">(</span><span class="s1">'pred_ppm'</span><span class="p">,</span><span class="w"> </span><span class="s1">'avg_ppm'</span><span class="p">)],</span><span class="w">
+  </span><span class="n">pal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heat.colors</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10" /></p>
+
+<p>The effect of paying attention to autocorrelation is subtle, but it is noticable and had the expected effect in tract 5800.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">census_lead_tracts</span><span class="p">[</span><span class="m">52</span><span class="p">,]</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Simple feature collection with 1 feature and 5 fields
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 405633.1 ymin: 4762867 xmax: 406445.9 ymax: 4764711
+epsg (SRID):    32618
+proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
+# A tibble: 1 x 6
+  TRACT POP2000 perc_hispa avg_ppm pred_ppm                       geometry
+  &lt;int&gt;   &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;              &lt;sf_geometry [m]&gt;
+1  5800    2715     0.0302    5.44     5.65 POLYGON ((406445.9 4762893,...
+</code></pre></div></div>
+
+<p class="ToS"><a href="#/slides/smooth">Top of Section</a></p>
+
+<hr />
+
+<p><a name="/slides/regress"></a></p>
+
+<h2 id="regression">Regression</h2>
+
+<p>Continuing the theme that vector data <em>is</em> tabular data, the natural
+progression in statistical analysis is toward regression. Building a regression
+model requires making good assumptions about relationships in your data:</p>
+
+<ul>
+  <li>between <em>columns</em> as independent and dependent variables</li>
+  <li>between <em>rows</em> as more-or-less independent observations</li>
+</ul>
+
+<p>The following model assumes an association (in the linear least-squares sense),
+between the hispanic population and lead concentrations and assumes independence
+of every census tract (i.e. row).</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">ppm.lm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">pred_ppm</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">perc_hispa</span><span class="p">,</span><span class="w">
+  </span><span class="n">census_lead_tracts</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Is that model any good?</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">census_lead_tracts</span><span class="p">[</span><span class="s1">'lm.resid'</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">resid</span><span class="p">(</span><span class="n">ppm.lm</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">census_lead_tracts</span><span class="p">[</span><span class="s1">'lm.resid'</span><span class="p">])</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
+
+<p class="notes">Polygons close to eachother tend to have similar residuals: there is
+autocorrelation. It is tempting to ask for a semivariogram plot of the
+residuals, but that requires a precise definition of the distance between
+polygons. A favored alternative for quantifying autoregression in non-point
+feature collections is Moran’s I. This analog to Pearson’s correlation
+coeficient quantifies autocorrelation rather than cross-correlation.</p>
+
+<p>Moran’s I is the correlation between all pairs of features, weighted to
+emphasize features that are close together. It does not dodge the problem of
+distance weighting, it actually adds flexibility, along with some norms.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">sp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">import</span><span class="p">(</span><span class="s1">'sp'</span><span class="p">)</span><span class="w">
+</span><span class="n">sd</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">import</span><span class="p">(</span><span class="s1">'spdep'</span><span class="p">)</span><span class="w">
+</span><span class="n">tracts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">as</span><span class="p">(</span><span class="w">
+  </span><span class="n">sf</span><span class="o">$</span><span class="n">st_geometry</span><span class="p">(</span><span class="n">census_tracts</span><span class="p">),</span><span class="w"> </span><span class="s1">'Spatial'</span><span class="p">)</span><span class="w">
+</span><span class="n">tracts_nb</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sd</span><span class="o">$</span><span class="n">poly2nb</span><span class="p">(</span><span class="n">tracts</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">neighbors</code> variable is the network of features sharing a boundary point.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">census_lead_tracts</span><span class="p">[</span><span class="s1">'lm.resid'</span><span class="p">])</span><span class="w">
+</span><span class="n">sd</span><span class="o">$</span><span class="n">plot.nb</span><span class="p">(</span><span class="n">tracts_nb</span><span class="p">,</span><span class="w">
+  </span><span class="n">sp</span><span class="o">$</span><span class="n">coordinates</span><span class="p">(</span><span class="n">tracts</span><span class="p">),</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
+
+<p>Reshape the adjacency matrix into a list of neighbors with associated weights.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">tracts_weight</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sd</span><span class="o">$</span><span class="n">nb2listw</span><span class="p">(</span><span class="n">tracts_nb</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Visualize correlation between the residuals and the weighted average of their
+neighbors with <code class="highlighter-rouge">moran.plot</code> from the <a href="" class="rlib">spdep</a></p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">sd</span><span class="o">$</span><span class="n">moran.plot</span><span class="p">(</span><span class="w">
+  </span><span class="n">census_lead_tracts</span><span class="p">[[</span><span class="s1">'lm.resid'</span><span class="p">]],</span><span class="w">
+  </span><span class="n">tracts_weight</span><span class="p">,</span><span class="w">
+  </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">census_lead_tracts</span><span class="p">[[</span><span class="s1">'TRACT'</span><span class="p">]],</span><span class="w">
+  </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" /></p>
+
+<p>There are many ways to use geospatial information about tracts to impose
+assumptions about non-independence between observations in the regression. One
+approach is a Spatial Auto-Regressive (SAR) model, which regresses each value against
+the weighted average of neighbors.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">ppm.sarlm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sd</span><span class="o">$</span><span class="n">lagsarlm</span><span class="p">(</span><span class="w">
+  </span><span class="n">pred_ppm</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">perc_hispa</span><span class="p">,</span><span class="w">
+  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">census_lead_tracts</span><span class="p">,</span><span class="w">
+  </span><span class="n">tracts_weight</span><span class="p">,</span><span class="w">
+  </span><span class="n">tol.solve</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1.0e-30</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The Moran’s I plot of residuals shows less correlation; which means the SAR
+model’s assumption about spatial autocorrelation (i.e. between table rows) makes
+the rest of the model more plausible.</p>
+
+<div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">sd</span><span class="o">$</span><span class="n">moran.plot</span><span class="p">(</span><span class="w">
+  </span><span class="n">resid</span><span class="p">(</span><span class="n">ppm.sarlm</span><span class="p">),</span><span class="w">
+  </span><span class="n">tracts_weight</span><span class="p">,</span><span class="w">
+  </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">census_lead_tracts</span><span class="p">[[</span><span class="s1">'TRACT'</span><span class="p">]],</span><span class="w">
+  </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" /></p>
+
+<p>Feeling more confident in the model, we can now take a look at the regression
+coefficients.</p>
+
+<div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">summary</span><span class="p">(</span><span class="n">ppm.sarlm</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
+sd$lagsarlm(formula = pred_ppm ~ perc_hispa, data = census_lead_tracts, 
+    listw = tracts_weight, tol.solve = 1e-30)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-1.002799 -0.212714  0.074072  0.235047  0.870624 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+            Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)  1.10395    0.45580  2.4220  0.01544
+perc_hispa   1.27550    0.99076  1.2874  0.19795
+
+Rho: 0.76278, LR test value: 23.183, p-value: 1.473e-06
+Asymptotic standard error: 0.092139
+    z-value: 8.2786, p-value: 2.2204e-16
+Wald statistic: 68.535, p-value: &lt; 2.22e-16
+
+Log likelihood: -31.49178 for lag model
+ML residual variance (sigma squared): 0.15101, (sigma: 0.3886)
+Number of observations: 57 
+Number of parameters estimated: 4 
+AIC: 70.984, (AIC for lm: 92.166)
+LM test for residual autocorrelation
+test value: 5.5923, p-value: 0.01804
+</code></pre></div></div>
+
+<p class="ToS"><a href="#/slides/regress">Top of Section</a></p>
+
+<hr />
+
+<p><a name="/slides/conclude"></a></p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Rapid tour of packages providing tools for manipulation and analysis of
+vector data in R.</p>
+
+<ul>
+  <li><a href="" class="rlib">sf</a>
+    <ul>
+      <li><code class="highlighter-rouge">st_sf</code>: make a simple features data frame</li>
+      <li><code class="highlighter-rouge">read_sf</code>: read a file into a simple features data frame</li>
+      <li><code class="highlighter-rouge">st_join</code>: match tables on their geometry columns</li>
+    </ul>
+  </li>
+  <li><a href="" class="rlib">gstat</a>
+    <ul>
+      <li><code class="highlighter-rouge">variogram</code>: distance lagged correlation for points</li>
+      <li><code class="highlighter-rouge">fit.variogram</code>: autocorrelation model</li>
+      <li><code class="highlighter-rouge">krige</code>: smooth interpolation over points</li>
+    </ul>
+  </li>
+</ul>
+
+<ul>
+  <li><a href="" class="rlib">sp</a>: a low level package with useful <code class="highlighter-rouge">Spatial*</code> class objects</li>
+  <li><a href="" class="rlib">spdep</a>
+    <ul>
+      <li><code class="highlighter-rouge">poly2nb</code>, <code class="highlighter-rouge">nb2listw</code>: calculate spatial neighbors and their weights</li>
+      <li><code class="highlighter-rouge">moran.plot</code>: infer autocorrelation from residual scatter plots</li>
+      <li><code class="highlighter-rouge">lagsarlm</code>: SAR model estimation</li>
+    </ul>
+  </li>
+</ul>
+
+<p class="ToS"><a href="#/slides/conclude">Top of Section</a></p>
+
+<hr />
+
+
+
+      </div>
+    </div>
+  <script>
+ var collection = document.getElementsByClassName('rlib');
+ for (var i = 0; i < collection.length; i++) {
+     var a = collection[i];
+     a.href = 'https://cran.r-project.org/package=' + a.innerText;
+ };
+ var collection = document.getElementsByClassName('pylib');
+ for (var i = 0; i < collection.length; i++) {
+     var a = collection[i];
+     a.href = 'https://pypi.python.org/pypi/' + a.innerText;
+ };
+</script>
+
+  </body>
+</html>
