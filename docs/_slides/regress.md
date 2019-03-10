@@ -1,6 +1,4 @@
 ---
-editor_options: 
-  chunk_output_type: console
 ---
 
 ## Regression
@@ -19,6 +17,7 @@ between the hispanic population and lead concentrations and assumes independence
 of every census tract (i.e. row).
 
 
+
 ~~~r
 ppm.lm <- lm(pred_ppm ~ perc_hispa,
   census_lead_tracts)
@@ -31,15 +30,14 @@ ppm.lm <- lm(pred_ppm ~ perc_hispa,
 Is that model any good?
 
 
+
 ~~~r
 census_lead_tracts['lm.resid'] <- resid(ppm.lm)
 plot(census_lead_tracts['lm.resid'])
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
-
-![plot of chunk unnamed-chunk-2]({{ site.baseurl }}/images/regress/unnamed-chunk-2-1.png)
+![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-2-1.png)
 {:.captioned}
-
 
 ===
 
@@ -53,15 +51,41 @@ coeficient quantifies autocorrelation rather than cross-correlation.
 
 Moran's I is the correlation between all pairs of features, weighted to
 emphasize features that are close together. It does not dodge the problem of
-distance weighting, it actually adds flexibility, along with some norms.
+distance weighting, but provides default assumptions for how to do it.
+
 
 
 ~~~r
-sp <- import('sp')
-sd <- import('spdep')
+library(sp)
+library(spdep)
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+
+
+~~~
+Loading required package: Matrix
+~~~
+{:.output}
+
+
+~~~
+Loading required package: spData
+~~~
+{:.output}
+
+
+~~~
+To access larger datasets in this package, install the spDataLarge
+package with: `install.packages('spDataLarge',
+repos='https://nowosad.github.io/drat/', type='source')`
+~~~
+{:.output}
+
+
+~~~r
 tracts <- as(
-  sf$st_geometry(census_tracts), 'Spatial')
-tracts_nb <- sd$poly2nb(tracts)
+  st_geometry(census_tracts), 'Spatial')
+tracts_nb <- poly2nb(tracts)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -71,24 +95,23 @@ tracts_nb <- sd$poly2nb(tracts)
 The `neighbors` variable is the network of features sharing a boundary point.
 
 
+
 ~~~r
-plot(census_lead_tracts['lm.resid'])
-sd$plot.nb(tracts_nb,
-  sp$coordinates(tracts), add = TRUE)
+plot(census_lead_tracts['lm.resid'], reset = FALSE)
+plot.nb(tracts_nb, coordinates(tracts), add = TRUE)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
-
-![plot of chunk unnamed-chunk-4]({{ site.baseurl }}/images/regress/unnamed-chunk-4-1.png)
+![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-4-1.png)
 {:.captioned}
-
 
 ===
 
 Reshape the adjacency matrix into a list of neighbors with associated weights.
 
 
+
 ~~~r
-tracts_weight <- sd$nb2listw(tracts_nb)
+tracts_weight <- nb2listw(tracts_nb)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -96,21 +119,20 @@ tracts_weight <- sd$nb2listw(tracts_nb)
 ===
 
 Visualize correlation between the residuals and the weighted average of their
-neighbors with `moran.plot` from the [spdep](){:.rlib}
+neighbors with `moran.plot` from the [spdep](){:.rlib}. The positive trend line is consistent with the earlier observation that features in close proximity have similar residuals.
+
 
 
 ~~~r
-sd$moran.plot(
+moran.plot(
   census_lead_tracts[['lm.resid']],
   tracts_weight,
   labels = census_lead_tracts[['TRACT']],
   pch = 19)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
-
-![plot of chunk unnamed-chunk-6]({{ site.baseurl }}/images/regress/unnamed-chunk-6-1.png)
+![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-6-1.png)
 {:.captioned}
-
 
 ===
 
@@ -121,8 +143,9 @@ the weighted average of neighbors.
 
 
 
+
 ~~~r
-ppm.sarlm <- sd$lagsarlm(
+ppm.sarlm <- lagsarlm(
   pred_ppm ~ perc_hispa,
   data = census_lead_tracts,
   tracts_weight,
@@ -133,63 +156,63 @@ ppm.sarlm <- sd$lagsarlm(
 
 ===
 
-The Moran's I plot of residuals shows less correlation; which means the SAR
+The Moran's I plot of residuals now shows less correlation; which means the SAR
 model's assumption about spatial autocorrelation (i.e. between table rows) makes
 the rest of the model more plausible.
 
 
+
 ~~~r
-sd$moran.plot(
+moran.plot(
   resid(ppm.sarlm),
   tracts_weight,
   labels = census_lead_tracts[['TRACT']],
   pch = 19)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
-
-![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/regress/unnamed-chunk-9-1.png)
+![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-9-1.png)
 {:.captioned}
-
 
 ===
 
 Feeling more confident in the model, we can now take a look at the regression
-coefficients.
+coefficients and overall model fit.
+
 
 
 ~~~r
-summary(ppm.sarlm)
+> summary(ppm.sarlm)
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
 
-Call:
-sd$lagsarlm(formula = pred_ppm ~ perc_hispa, data = census_lead_tracts, 
+Call:lagsarlm(formula = pred_ppm ~ perc_hispa, data = census_lead_tracts, 
     listw = tracts_weight, tol.solve = 1e-30)
 
 Residuals:
       Min        1Q    Median        3Q       Max 
--1.002799 -0.212714  0.074072  0.235047  0.870624 
+-0.992669 -0.210942  0.037845  0.246989  0.888440 
 
 Type: lag 
 Coefficients: (asymptotic standard errors) 
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)  1.10395    0.45580  2.4220  0.01544
-perc_hispa   1.27550    0.99076  1.2874  0.19795
+(Intercept)  1.16047    0.46978  2.4702   0.0135
+perc_hispa   1.45285    0.95717  1.5179   0.1291
 
-Rho: 0.76278, LR test value: 23.183, p-value: 1.473e-06
-Asymptotic standard error: 0.092139
-    z-value: 8.2786, p-value: 2.2204e-16
-Wald statistic: 68.535, p-value: < 2.22e-16
+Rho: 0.7499, LR test value: 22.434, p-value: 2.175e-06
+Asymptotic standard error: 0.095079
+    z-value: 7.8871, p-value: 3.1086e-15
+Wald statistic: 62.207, p-value: 3.1086e-15
 
-Log likelihood: -31.49178 for lag model
-ML residual variance (sigma squared): 0.15101, (sigma: 0.3886)
+Log likelihood: -29.16485 for lag model
+ML residual variance (sigma squared): 0.14018, (sigma: 0.37441)
 Number of observations: 57 
 Number of parameters estimated: 4 
-AIC: 70.984, (AIC for lm: 92.166)
+AIC: 66.33, (AIC for lm: 86.764)
 LM test for residual autocorrelation
-test value: 5.5923, p-value: 0.01804
+test value: 4.5564, p-value: 0.032797
 ~~~
 {:.output}
 

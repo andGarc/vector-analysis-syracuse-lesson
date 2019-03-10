@@ -1,6 +1,4 @@
 ---
-editor_options: 
-  chunk_output_type: console
 ---
 
 ## Regression
@@ -44,14 +42,15 @@ coeficient quantifies autocorrelation rather than cross-correlation.
 
 Moran's I is the correlation between all pairs of features, weighted to
 emphasize features that are close together. It does not dodge the problem of
-distance weighting, it actually adds flexibility, along with some norms.
+distance weighting, but provides default assumptions for how to do it.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-sp <- import('sp')
-sd <- import('spdep')
+library(sp)
+library(spdep)
+
 tracts <- as(
-  sf$st_geometry(census_tracts), 'Spatial')
-tracts_nb <- sd$poly2nb(tracts)
+  st_geometry(census_tracts), 'Spatial')
+tracts_nb <- poly2nb(tracts)
 ```
 
 ===
@@ -59,9 +58,8 @@ tracts_nb <- sd$poly2nb(tracts)
 The `neighbors` variable is the network of features sharing a boundary point.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-plot(census_lead_tracts['lm.resid'])
-sd$plot.nb(tracts_nb,
-  sp$coordinates(tracts), add = TRUE)
+plot(census_lead_tracts['lm.resid'], reset = FALSE)
+plot.nb(tracts_nb, coordinates(tracts), add = TRUE)
 ```
 
 ===
@@ -69,16 +67,16 @@ sd$plot.nb(tracts_nb,
 Reshape the adjacency matrix into a list of neighbors with associated weights.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-tracts_weight <- sd$nb2listw(tracts_nb)
+tracts_weight <- nb2listw(tracts_nb)
 ```
 
 ===
 
 Visualize correlation between the residuals and the weighted average of their
-neighbors with `moran.plot` from the [spdep](){:.rlib}
+neighbors with `moran.plot` from the [spdep](){:.rlib}. The positive trend line is consistent with the earlier observation that features in close proximity have similar residuals.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-sd$moran.plot(
+moran.plot(
   census_lead_tracts[['lm.resid']],
   tracts_weight,
   labels = census_lead_tracts[['TRACT']],
@@ -93,10 +91,10 @@ approach is a Spatial Auto-Regressive (SAR) model, which regresses each value ag
 the weighted average of neighbors.
 
 ```{r, include = FALSE}
-set.seed(20180402)
+set.seed(20190327)
 ```
 ```{r, title = '{{ site.handouts[0] }}'}
-ppm.sarlm <- sd$lagsarlm(
+ppm.sarlm <- lagsarlm(
   pred_ppm ~ perc_hispa,
   data = census_lead_tracts,
   tracts_weight,
@@ -105,12 +103,12 @@ ppm.sarlm <- sd$lagsarlm(
 
 ===
 
-The Moran's I plot of residuals shows less correlation; which means the SAR
+The Moran's I plot of residuals now shows less correlation; which means the SAR
 model's assumption about spatial autocorrelation (i.e. between table rows) makes
 the rest of the model more plausible.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-sd$moran.plot(
+moran.plot(
   resid(ppm.sarlm),
   tracts_weight,
   labels = census_lead_tracts[['TRACT']],
@@ -120,7 +118,7 @@ sd$moran.plot(
 ===
 
 Feeling more confident in the model, we can now take a look at the regression
-coefficients.
+coefficients and overall model fit.
 
 ```{r}
 summary(ppm.sarlm)

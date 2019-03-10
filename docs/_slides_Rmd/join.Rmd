@@ -1,6 +1,4 @@
 ---
-editor_options: 
-  chunk_output_type: console
 ---
 
 ## Spatial Join
@@ -10,10 +8,9 @@ is for polygons. Combine the information from these tables by determining which
 polygon contains each point.
 
 ```{r, title = '{{ site.handouts[0] }}' }
-plot(census_tracts['POP2000'],
-  pal = cm.colors)
-plot(sf$st_geometry(lead),
-  pch = '.', add = TRUE)
+ggplot(census_tracts, aes(fill = POP2000)) +
+  geom_sf() +
+  geom_sf(data = lead, color = 'red', fill = NA, size = 0.1)
 ```
 
 ===
@@ -35,8 +32,8 @@ Before doing any spatial join, it is essential that both tables share a common
 CRS.
 
 ```{r, results = 'hide'}
-sf$st_crs(lead)
-sf$st_crs(census_tracts)
+st_crs(lead)
+st_crs(census_tracts)
 ```
 
 ===
@@ -45,7 +42,7 @@ The `st_join` function performs a left join using the geometries of the two
 simple feature collections.
 
 ```{r}
-sf$st_join(lead, census_tracts)
+st_join(lead, census_tracts)
 ```
 
 ===
@@ -54,7 +51,7 @@ sf$st_join(lead, census_tracts)
 - Matching defaults to `st_intersects` but permits any predicate function
 
 ```{r}
-sf$st_join(lead, census_tracts,
+st_join(lead, census_tracts,
   join = st_contains)
 ```
 
@@ -66,8 +63,8 @@ spatial data can by dropped.
 
 ```{r, title = '{{ site.handouts[0] }}' }
 lead_tracts <- lead %>%
-    sf$st_join(census_tracts) %>%
-    sf$st_set_geometry(NULL)
+    st_join(census_tracts) %>%
+    st_drop_geometry()
 ```
 
 ===
@@ -76,8 +73,8 @@ Two more steps to group the data by "TRACT" and average the lead concentrations 
 
 ```{r, title = '{{ site.handouts[0] }}' }
 lead_tracts <- lead %>%
-    sf$st_join(census_tracts) %>%
-    sf$st_set_geometry(NULL) %>%
+    st_join(census_tracts) %>%
+    st_drop_geometry() %>%
     group_by(TRACT) %>%
     summarise(avg_ppm = mean(ppm))
 ```
@@ -89,23 +86,30 @@ To visualize the average lead concentration from soil samples within each cencus
 ```{r, title = '{{ site.handouts[0] }}', message = FALSE}
 census_lead_tracts <- census_tracts %>%
   inner_join(lead_tracts)
-plot(census_lead_tracts['avg_ppm'],
-  pal = heat.colors)
 ```
 
 ===
 
+Make a plot of `avg_ppm` for each census tract.
+
+```{r, title = '{{ site.handouts[0] }}', message = FALSE}
+ggplot(census_lead_tracts, aes(fill = avg_ppm)) +
+  geom_sf() +
+  scale_fill_gradientn(colors = heat.colors(7))
+```
+
 A problem with this approach to aggregation is that it ignores autocorrelation. Points close to eachother tend to have similar values and shouldn't be given equal weight in averages within a polygon.
+{:.notes}
 
 ===
 
-Take a closer look at tract 5800 (in row 52), and notice that several low values are nearly
-stacked on top of eachother.
+Take a closer look at tract 5800 (around 43.025N, 76.152W), and notice that several low values are nearly stacked on top of eachother.
 
-```{r, eval = FALSE}
-m <- import('mapview')
-m$mapview(sf$st_geometry(census_tracts)) +
-  m$mapview(lead['ppm'])
+```{r}
+library(mapview)
+
+mapview(census_tracts, legend = FALSE) +
+  mapview(lead['ppm'])
 ```
 
 [geometry-predicates]: https://en.wikipedia.org/wiki/DE-9IM

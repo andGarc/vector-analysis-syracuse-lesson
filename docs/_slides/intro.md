@@ -17,19 +17,3 @@
 - Smooth point data with Kriging
 - Include autocorrelation in a regression
 
-===
-
-## Import Clarification
-
-Packages or libraries expand the vocabulary of the R interpreter, sometimes too
-quickly for a user's comfort. The [modules](){:.rlib} library provides an `import`
-command, used throughout this lesson, to help keep tabs the many new commands we
-import.
-
-
-~~~r
-library('modules')
-import('magrittr', '%>%')
-~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-

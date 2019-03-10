@@ -1,18 +1,16 @@
 ---
-editor_options: 
-  chunk_output_type: console
 ---
 
 ## Simple Features
 
 A standardized set of geometric shapes are the essense of vector data, but these are next to useless outside a tabular structure.
 
-```{r, title = '{{ site.handouts[0] }}' }
-sf <- import('sf')
+```{r, title = '{{ site.handouts[0] }}', message = FALSE}
+library(sf)
 
 lead <- read.csv('data/SYR_soil_PB.csv')
-lead[['geometry']] <- sf$st_sfc(
-  sf$st_point(),
+lead[['geometry']] <- st_sfc(
+  st_point(),
   crs = 32618)
 ```
 
@@ -35,7 +33,7 @@ Each element of the simple feature column is a simple feature geometry, here
 created from the "x" and "y" elements of a given feature.
 
 ```{r, title = '{{ site.handouts[0] }}' }
-lead[[1, 'geometry']] <- sf$st_point(
+lead[[1, 'geometry']] <- st_point(
   c(x = lead[[1, 'x']], y = lead[[1, 'y']]),
   dim = 'XY')
 ```
@@ -50,7 +48,7 @@ The whole data frame must be cast to a simple feature object, which causes
 functions like `print` and `plot` to use methods introduced by the `sf` library.
 
 ```{r, title = '{{ site.handouts[0] }}' }
-lead <- sf$st_sf(lead)
+lead <- st_sf(lead)
 ```
 
 ===
@@ -69,7 +67,7 @@ point coordinates. The CRS must be specified via EPSG integer or proj4 string.
 
 ```{r, title = '{{ site.handouts[0] }}' }
 lead <- read.csv('data/SYR_soil_PB.csv')
-lead <- sf$st_as_sf(lead,
+lead <- st_as_sf(lead,
   coords = c('x', 'y'),
   crs = 32618)
 ```
@@ -88,6 +86,17 @@ plot(lead['ppm'])
 
 ===
 
+Use `geom_sf` to use simple features in [ggplot2]{}({:.rlib}) figures.
+
+```{r, title = '{{ site.handouts[0] }}'}
+library(ggplot2)
+
+ggplot(data = lead, mapping = aes(color = ppm)) +
+  geom_sf()
+```
+
+===
+
 ## Feature Collections
 
 More complicated geometries are usually not stored in CSV files, but they are
@@ -97,7 +106,7 @@ manipulations done on tabular data work just as well on `sf` objects.
 {:.notes}
 
 ```{r, title = '{{ site.handouts[0] }}' }
-blockgroups <- sf$read_sf('data/bg_00')
+blockgroups <- read_sf('data/bg_00')
 ```
 
 ===
@@ -144,12 +153,11 @@ blockgroups[1:5, 'BKG_KEY']
 
 ===
 
-In the `plot` method for feature collections, the "x" in the usual `plot(x,
-y, ...)` automatically takes the sticky "geometry" column and the type of plot
-is assumed to be a map. Only the "y" needs to be specified.
+In the `aes` mapping for feature collections, the "x" and "y" variables are automatically assigned to the sticky "geometry" column, while other attributes can be assigned to visual elements like `fill` or (edge) `color`.
 
 ```{r}
-plot(blockgroups['Shape_Area'])
+ggplot(blockgroups, aes(fill = Shape_Area)) +
+  geom_sf()
 ```
 
 ===
@@ -172,8 +180,7 @@ Merge tables on a unique identifier (our primary key is "BKG_KEY"), but let the
 "sf" object come first or is special attributes get lost.
 
 ```{r, title = '{{ site.handouts[0] }}', message = FALSE, warning = FALSE}
-import('dplyr', 
-  'inner_join', 'group_by', 'summarise')
+library(dplyr)
 
 census_blockgroups <- inner_join(
   blockgroups, census,
@@ -189,7 +196,8 @@ class(census_blockgroups)
 The census data is now easily vizualized as a map.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-plot(census_blockgroups['POP2000'])
+ggplot(census_blockgroups, aes(fill = POP2000)) +
+  geom_sf()
 ```
 
 ===
@@ -216,9 +224,10 @@ Read in the census tracts from a separate shapefile to confirm that the
 boundaries were dissolved as expected.
 
 ```{r, title = '{{ site.handouts[0] }}' }
-tracts <- sf$read_sf('data/ct_00')
-plot(census_tracts['POP2000'])
-plot(sf$st_geometry(tracts), border = 'red', add = TRUE)
+tracts <- read_sf('data/ct_00')
+ggplot(census_tracts, aes(fill = POP2000)) +
+  geom_sf() +
+  geom_sf(data = tracts, color = 'red', fill = NA)
 ```
 
 ===

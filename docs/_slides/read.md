@@ -1,6 +1,4 @@
 ---
-editor_options: 
-  chunk_output_type: console
 ---
 
 ## Simple Features
@@ -8,22 +6,25 @@ editor_options:
 A standardized set of geometric shapes are the essense of vector data, but these are next to useless outside a tabular structure.
 
 
+
 ~~~r
-sf <- import('sf')
+library(sf)
 
 lead <- read.csv('data/SYR_soil_PB.csv')
-lead[['geometry']] <- sf$st_sfc(
-  sf$st_point(),
+lead[['geometry']] <- st_sfc(
+  st_point(),
   crs = 32618)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
 
 
+
 ~~~r
-head(lead)
+> head(lead)
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
          x       y ID      ppm    geometry
@@ -52,8 +53,9 @@ Each element of the simple feature column is a simple feature geometry, here
 created from the "x" and "y" elements of a given feature.
 
 
+
 ~~~r
-lead[[1, 'geometry']] <- sf$st_point(
+lead[[1, 'geometry']] <- st_point(
   c(x = lead[[1, 'x']], y = lead[[1, 'y']]),
   dim = 'XY')
 ~~~
@@ -61,10 +63,12 @@ lead[[1, 'geometry']] <- sf$st_point(
 
 
 
+
 ~~~r
-head(lead)
+> head(lead)
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
          x       y ID      ppm                 geometry
@@ -84,8 +88,9 @@ The whole data frame must be cast to a simple feature object, which causes
 functions like `print` and `plot` to use methods introduced by the `sf` library.
 
 
+
 ~~~r
-lead <- sf$st_sf(lead)
+lead <- st_sf(lead)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -96,10 +101,12 @@ For example, the `print` method automatically shows the CRS and truncates the
 number of records displayed.
 
 
+
 ~~~r
-lead
+> lead
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
 Simple feature collection with 3149 features and 4 fields (with 3149 geometries empty)
@@ -130,9 +137,10 @@ Naturally, there is a shortcut to creating an `sf` object from a data frame with
 point coordinates. The CRS must be specified via EPSG integer or proj4 string.
 
 
+
 ~~~r
 lead <- read.csv('data/SYR_soil_PB.csv')
-lead <- sf$st_as_sf(lead,
+lead <- st_as_sf(lead,
   coords = c('x', 'y'),
   crs = 32618)
 ~~~
@@ -140,10 +148,12 @@ lead <- sf$st_as_sf(lead,
 
 
 
+
 ~~~r
-lead
+> lead
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
 Simple feature collection with 3149 features and 2 fields
@@ -173,14 +183,29 @@ First 10 features:
 Now that table is an `sf` object, the data are easilly displayed as a map.
 
 
+
 ~~~r
 plot(lead['ppm'])
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
-
-![plot of chunk unnamed-chunk-9]({{ site.baseurl }}/images/read/unnamed-chunk-9-1.png)
+![ ]({{ site.baseurl }}/images/read/unnamed-chunk-9-1.png)
 {:.captioned}
 
+===
+
+Use `geom_sf` to use simple features in [ggplot2]{}({:.rlib}) figures.
+
+
+
+~~~r
+library(ggplot2)
+
+ggplot(data = lead, mapping = aes(color = ppm)) +
+  geom_sf()
+~~~
+{:.text-document title="{{ site.handouts[0] }}"}
+![ ]({{ site.baseurl }}/images/read/unnamed-chunk-10-1.png)
+{:.captioned}
 
 ===
 
@@ -193,8 +218,9 @@ manipulations done on tabular data work just as well on `sf` objects.
 {:.notes}
 
 
+
 ~~~r
-blockgroups <- sf$read_sf('data/bg_00')
+blockgroups <- read_sf('data/bg_00')
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -204,32 +230,34 @@ blockgroups <- sf$read_sf('data/bg_00')
 Confirm that the coordinates in the geometry column are the correct UTMs.
 
 
+
 ~~~r
-blockgroups
+> blockgroups
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
-Simple feature collection with 147 features and 6 fields
+Simple feature collection with 147 features and 3 fields
 geometry type:  POLYGON
 dimension:      XY
 bbox:           xmin: 401938.3 ymin: 4759734 xmax: 412486.4 ymax: 4771049
 epsg (SRID):    32618
 proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
-# A tibble: 147 x 7
-   BKG_KEY      Shape_Leng Shape_Area BKG_KEY_1    Shape_Le_1 Shape_Ar_1
-   <chr>             <dbl>      <dbl> <chr>             <dbl>      <dbl>
- 1 360670001001     13520.   6135184. 360670001001     13520.   6135184.
- 2 360670003002      2547.    301840. 360670003002      2547.    301840.
- 3 360670003001      2678.    250998. 360670003001      2678.    250998.
- 4 360670002001      3392.    656276. 360670002001      3392.    656276.
- 5 360670004004      2224.    301086. 360670004004      2224.    301086.
- 6 360670004001      3263.    606495. 360670004001      3263.    606495.
- 7 360670004003      2878.    274532. 360670004003      2878.    274532.
- 8 360670004002      3606.    331035. 360670004002      3606.    331035.
- 9 360670010001      2951.    376786. 360670010001      2951.    376786.
-10 360670010003      2868.    265836. 360670010003      2868.    265836.
-# ... with 137 more rows, and 1 more variable: geometry <sf_geometry [m]>
+# A tibble: 147 x 4
+   BKG_KEY   Shape_Leng Shape_Area                                 geometry
+   <chr>          <dbl>      <dbl>                            <POLYGON [m]>
+ 1 36067000…     13520.   6135184. ((403476.4 4767682, 403356.7 4767804, 4…
+ 2 36067000…      2547.    301840. ((406271.7 4770188, 406186.1 4770270, 4…
+ 3 36067000…      2678.    250998. ((406730.3 4770235, 406687.8 4770205, 4…
+ 4 36067000…      3392.    656276. ((406436.1 4770029, 406340 4769973, 406…
+ 5 36067000…      2224.    301086. ((407469 4770033, 407363.9 4770035, 407…
+ 6 36067000…      3263.    606495. ((408398.6 4769564, 408283.1 4769556, 4…
+ 7 36067000…      2878.    274532. ((407477.4 4769773, 407401 4769767, 407…
+ 8 36067000…      3606.    331035. ((407486 4769507, 407443.5 4769504, 407…
+ 9 36067001…      2951.    376786. ((410704.4 4769103, 410625.2 4769100, 4…
+10 36067001…      2868.    265836. ((409318.3 4769203, 409299.6 4769535, 4…
+# … with 137 more rows
 ~~~
 {:.output}
 
@@ -237,13 +265,15 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 Note the table dimensions show 147 features in the collection.
 
 
+
 ~~~r
-dim(blockgroups)
+> dim(blockgroups)
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
-[1] 147   7
+[1] 147   4
 ~~~
 {:.output}
 
@@ -253,10 +283,12 @@ dim(blockgroups)
 Simple feature collections are data frames.
 
 
+
 ~~~r
-class(blockgroups)
+> class(blockgroups)
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
 [1] "sf"         "tbl_df"     "tbl"        "data.frame"
@@ -273,10 +305,12 @@ table operations, like subsetting.
 {:.notes}
 
 
+
 ~~~r
-blockgroups[1:5, 'BKG_KEY']
+> blockgroups[1:5, 'BKG_KEY']
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
 Simple feature collection with 5 features and 1 field
@@ -286,13 +320,13 @@ bbox:           xmin: 402304.2 ymin: 4767421 xmax: 407469 ymax: 4771049
 epsg (SRID):    32618
 proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 # A tibble: 5 x 2
-  BKG_KEY                            geometry
-  <chr>                     <sf_geometry [m]>
-1 360670001001 POLYGON ((403476.4 4767682,...
-2 360670003002 POLYGON ((406271.7 4770188,...
-3 360670003001 POLYGON ((406730.3 4770235,...
-4 360670002001 POLYGON ((406436.1 4770029,...
-5 360670004004 POLYGON ((407469 4770033, 4...
+  BKG_KEY                                                          geometry
+  <chr>                                                       <POLYGON [m]>
+1 3606700010… ((403476.4 4767682, 403356.7 4767804, 403117.2 4768027, 4028…
+2 3606700030… ((406271.7 4770188, 406186.1 4770270, 406107.9 4770345, 4060…
+3 3606700030… ((406730.3 4770235, 406687.8 4770205, 406650.9 4770179, 4066…
+4 3606700020… ((406436.1 4770029, 406340 4769973, 406307.2 4769954, 406206…
+5 3606700040… ((407469 4770033, 407363.9 4770035, 407233.4 4770036, 407235…
 ~~~
 {:.output}
 
@@ -307,24 +341,23 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 
 ===
 
-In the `plot` method for feature collections, the "x" in the usual `plot(x,
-y, ...)` automatically takes the sticky "geometry" column and the type of plot
-is assumed to be a map. Only the "y" needs to be specified.
+In the `aes` mapping for feature collections, the "x" and "y" variables are automatically assigned to the sticky "geometry" column, while other attributes can be assigned to visual elements like `fill` or (edge) `color`.
+
 
 
 ~~~r
-plot(blockgroups['Shape_Area'])
+> ggplot(blockgroups, aes(fill = Shape_Area)) +
++   geom_sf()
 ~~~
-{:.input}
-
-![plot of chunk unnamed-chunk-15]({{ site.baseurl }}/images/read/unnamed-chunk-15-1.png)
+{:.input title="Console"}
+![ ]({{ site.baseurl }}/images/read/unnamed-chunk-16-1.png)
 {:.captioned}
-
 
 ===
 
 Merging with a regular data frame is done by normal merging non-spatial columns
 found in both tables.
+
 
 
 ~~~r
@@ -344,9 +377,9 @@ Merge tables on a unique identifier (our primary key is "BKG_KEY"), but let the
 "sf" object come first or is special attributes get lost.
 
 
+
 ~~~r
-import('dplyr', 
-  'inner_join', 'group_by', 'summarise')
+library(dplyr)
 
 census_blockgroups <- inner_join(
   blockgroups, census,
@@ -356,10 +389,12 @@ census_blockgroups <- inner_join(
 
 
 
+
 ~~~r
-class(census_blockgroups)
+> class(census_blockgroups)
 ~~~
-{:.input}
+{:.input title="Console"}
+
 
 ~~~
 [1] "sf"         "tbl_df"     "tbl"        "data.frame"
@@ -372,14 +407,14 @@ class(census_blockgroups)
 The census data is now easily vizualized as a map.
 
 
+
 ~~~r
-plot(census_blockgroups['POP2000'])
+ggplot(census_blockgroups, aes(fill = POP2000)) +
+  geom_sf()
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
-
-![plot of chunk unnamed-chunk-19]({{ site.baseurl }}/images/read/unnamed-chunk-19-1.png)
+![ ]({{ site.baseurl }}/images/read/unnamed-chunk-20-1.png)
 {:.captioned}
-
 
 ===
 
@@ -390,6 +425,7 @@ Feature collections also cooperate with the common "split-apply-combine" sequenc
 - *combine* -- return the results as columns of a new feature collection
 
 ===
+
 
 
 ~~~r
@@ -408,16 +444,16 @@ Read in the census tracts from a separate shapefile to confirm that the
 boundaries were dissolved as expected.
 
 
+
 ~~~r
-tracts <- sf$read_sf('data/ct_00')
-plot(census_tracts['POP2000'])
-plot(sf$st_geometry(tracts), border = 'red', add = TRUE)
+tracts <- read_sf('data/ct_00')
+ggplot(census_tracts, aes(fill = POP2000)) +
+  geom_sf() +
+  geom_sf(data = tracts, color = 'red', fill = NA)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
-
-![plot of chunk unnamed-chunk-21]({{ site.baseurl }}/images/read/unnamed-chunk-21-1.png)
+![ ]({{ site.baseurl }}/images/read/unnamed-chunk-22-1.png)
 {:.captioned}
-
 
 ===
 
