@@ -1,14 +1,13 @@
 ## Import Clarification
 
-library('modules')
-import('magrittr', '%>%')
+library(magrittr)
 
 ## Simple Features
 
-sf <- import(...)
+library(sf)
 
 lead <- read.csv('data/SYR_soil_PB.csv')
-lead[['geometry']] <- sf$st_sfc(
+lead[['geometry']] <- st_sfc(
   ...
   crs = 32618)
 
@@ -25,59 +24,68 @@ lead <- ...(lead,
 
 plot(lead['ppm'])
 
+library(ggplot2)
+ggplot(data = lead, mapping = aes(...)) +
+  ...()
+
 ## Feature Collections
 
-blockgroups <- ...('data/bg_00')
+blockgroups <- read_sf('data/bg_00')
 
 ## Table Operations
+
+ggplot(blockgroups, aes(...)) +
+   ...()
 
 census <- ...('data/SYR_census.csv')
 census$BKG_KEY <- factor(census$BKG_KEY)
 
-import('dplyr', 
-  'inner_join', 'group_by', 'summarise')
+library(dplyr)
 
 census_blockgroups <- ...(
-  ...
+  ..., census,
   by = c('BKG_KEY'))
 
-...
+ggplot(..., aes(fill = POP2000)) +
+  geom_sf()
 
 census_tracts <- census_blockgroups %>%
-  ... %>%
+  group_by(...) %>%
   ...(
     POP2000 = sum(POP2000),
     perc_hispa = sum(HISPANIC) / sum(POP2000))
 
 tracts <- ...('data/ct_00')
-plot(census_tracts['POP2000'])
-plot(..., border = 'red', add = TRUE)
+ggplot(..., aes(fill = POP2000)) +
+  geom_sf() +
+  geom_sf(..., color = 'red', fill = NA)
 
 ## Spatial Join
 
-plot(...,
-  pal = cm.colors)
-plot(...,
-  pch = '.', ...)
+ggplot(..., aes(fill = POP2000)) +
+  geom_sf() +
+  geom_sf(..., color = 'red', fill = NA, size = 0.1)
 
 lead_tracts <- lead %>%
-    ... %>%
-    ...
+    st_join(...) %>%
+    ...()
 
 lead_tracts <- lead %>%
-    sf$st_join(census_tracts) %>%
-    sf$st_set_geometry(NULL) %>%
+    st_join(census_tracts) %>%
+    st_drop_geometry() %>%
     ... %>%
     ...
 
 census_lead_tracts <- census_tracts %>%
   inner_join(...)
-plot(census_lead_tracts['avg_ppm'],
-  pal = heat.colors)
+
+ggplot(..., aes(fill = avg_ppm)) +
+  geom_sf() +
+  .__C__.externalptr(colors = heat.colors(7))
 
 ## The Semivariogram
 
-g <- import(...)
+library(gstat)
 
 lead_xy <- read.csv('data/SYR_soil_PB.csv')
 
@@ -101,31 +109,20 @@ idx <- unlist(
   ...(census_tracts, pred_ppm))
 pred_ppm <- ...
 
-plot(census_tracts['POP2000'],
-  pal = cm.colors)
-plot(pred_ppm,
-  pch = '.', ...)
-
-pred_ppm_xy <- data.frame(
-  ...)
-names(pred_ppm_xy) <- c('x', 'y')
-
-pred_ppm_xy <- ...(
-  ppm ~ 1,
-  locations = ~ x + y,
-  data = lead_xy,
-  ...,
-  model = v_ppm_fit)
+ggplot(..., aes(fill = POP2000)) +
+  geom_sf() +
+  geom_sf(..., color = 'red', fill = NA)
 
 pred_ppm <- ...(
   ...,
-  coords = c('x', 'y'),
-  crs = sf$st_crs(lead))
+  locations = lead,
+  newdata = pred_ppm,
+  ...)
 
 pred_ppm_tracts <-
   pred_ppm %>%
   ...(census_tracts) %>%
-  sf$st_set_geometry(NULL) %>%
+  st_set_geometry(NULL) %>%
   group_by(TRACT) %>%
   summarise(...)
 census_lead_tracts <- 
@@ -144,15 +141,15 @@ ppm.lm <- ...(pred_ppm ~ perc_hispa,
 census_lead_tracts['lm.resid'] <- ...
 plot(census_lead_tracts['lm.resid'])
 
-sp <- import(...)
-sd <- import(...)
+library(sp)
+library(spdep)
 tracts <- as(
-  sf$st_geometry(census_tracts), 'Spatial')
+  st_geometry(census_tracts), 'Spatial')
 tracts_nb <- ...(tracts)
 
 plot(census_lead_tracts['lm.resid'])
-sd$plot.nb(tracts_nb,
-  sp$coordinates(tracts), add = TRUE)
+plot.nb(tracts_nb,
+  coordinates(tracts), add = TRUE)
 
 tracts_weight <- ...(tracts_nb)
 
@@ -168,7 +165,7 @@ ppm.sarlm <- ...(
   tracts_weight,
   tol.solve = 1.0e-30)
 
-sd$moran.plot(
+moran.plot(
   ...,
   tracts_weight,
   labels = census_lead_tracts[['TRACT']],
