@@ -58,31 +58,7 @@ distance weighting, but provides default assumptions for how to do it.
 ~~~r
 library(sp)
 library(spdep)
-~~~
-{:.text-document title="{{ site.handouts[0] }}"}
 
-
-~~~
-Loading required package: Matrix
-~~~
-{:.output}
-
-
-~~~
-Loading required package: spData
-~~~
-{:.output}
-
-
-~~~
-To access larger datasets in this package, install the spDataLarge
-package with: `install.packages('spDataLarge',
-repos='https://nowosad.github.io/drat/', type='source')`
-~~~
-{:.output}
-
-
-~~~r
 tracts <- as(
   st_geometry(census_tracts), 'Spatial')
 tracts_nb <- poly2nb(tracts)

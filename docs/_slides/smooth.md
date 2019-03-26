@@ -5,8 +5,8 @@
 
 A semivariogram quantifies the effect of distance on the correlation between
 values from different locations. *On average*, measurements of the same variable
-at two nearby locations are more similar (lower variance) than when those locations
-are distant.
+at two nearby locations are more similar (lower variance) than when those
+locations are distant.
 {:.notes}
 
 The [gstat](){:.rlib} library, a geospatial analogue to the [stats](){:.rlib}
@@ -149,12 +149,15 @@ census_lead_tracts <-
 
 ===
 
+The predictions should be, and are, close to the original averages with
+deviations that correct for autocorrelation.
+
 
 
 ~~~r
-plot(census_lead_tracts[
-  c('pred_ppm', 'avg_ppm')],
-  pal = heat.colors)
+ggplot(census_lead_tracts,
+       aes(x = pred_ppm, y = avg_ppm)) +
+  geom_point()
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 ![ ]({{ site.baseurl }}/images/smooth/unnamed-chunk-8-1.png)

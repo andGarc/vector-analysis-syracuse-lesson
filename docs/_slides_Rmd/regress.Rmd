@@ -44,7 +44,7 @@ Moran's I is the correlation between all pairs of features, weighted to
 emphasize features that are close together. It does not dodge the problem of
 distance weighting, but provides default assumptions for how to do it.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, title = '{{ site.handouts[0] }}', message = FALSE}
 library(sp)
 library(spdep)
 

@@ -1,7 +1,3 @@
-## Import Clarification
-
-library(magrittr)
-
 ## Simple Features
 
 library(sf)
@@ -38,7 +34,7 @@ ggplot(blockgroups, aes(...)) +
    ...()
 
 census <- ...('data/SYR_census.csv')
-census$BKG_KEY <- factor(census$BKG_KEY)
+census$BKG_KEY <- as.character(census$BKG_KEY)
 
 library(dplyr)
 
@@ -79,9 +75,9 @@ lead_tracts <- lead %>%
 census_lead_tracts <- census_tracts %>%
   inner_join(...)
 
-ggplot(..., aes(fill = avg_ppm)) +
+ggplot(..., aes(fill = ...)) +
   geom_sf() +
-  .__C__.externalptr(colors = heat.colors(7))
+  scale_fill_gradientn(colors = heat.colors(7))
 
 ## The Semivariogram
 
@@ -122,16 +118,16 @@ pred_ppm <- ...(
 pred_ppm_tracts <-
   pred_ppm %>%
   ...(census_tracts) %>%
-  st_set_geometry(NULL) %>%
+  st_drop_geometry() %>%
   group_by(TRACT) %>%
   summarise(...)
 census_lead_tracts <- 
   census_lead_tracts %>%
   ...(pred_ppm_tracts)
 
-plot(...[
-  c('pred_ppm', 'avg_ppm')],
-  pal = heat.colors)
+ggplot(...,
+       aes(x = ..., y = ...)) +
+  geom_point()
 
 ## Regression
 
@@ -147,7 +143,9 @@ tracts <- as(
   st_geometry(census_tracts), 'Spatial')
 tracts_nb <- ...(tracts)
 
-plot(census_lead_tracts['lm.resid'])
+plot(
+  census_lead_tracts['lm.resid'],
+  reset = FALSE)
 plot.nb(tracts_nb,
   coordinates(tracts), add = TRUE)
 
@@ -164,6 +162,8 @@ ppm.sarlm <- ...(
   data = census_lead_tracts,
   tracts_weight,
   tol.solve = 1.0e-30)
+
+# dev.off() # uncomment to try this if moran.plot below fails
 
 moran.plot(
   ...,

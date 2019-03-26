@@ -31,8 +31,11 @@ expanding beyond equality based matches. Several different kinds of "intersectio
 Before doing any spatial join, it is essential that both tables share a common
 CRS.
 
-```{r, results = 'hide'}
+```{r}
 st_crs(lead)
+```
+
+```{r}
 st_crs(census_tracts)
 ```
 
@@ -48,12 +51,15 @@ st_join(lead, census_tracts)
 ===
 
 - Only the "left" geometry is preserved in the output
-- Matching defaults to `st_intersects` but permits any predicate function
+- Matching defaults to `st_intersects`,but permits any predicate function
 
 ```{r}
 st_join(lead, census_tracts,
   join = st_contains)
 ```
+
+This command would match on polygons within (contained by) each point, which
+is the wrong way around. Stick with the default.
 
 ===
 

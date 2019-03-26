@@ -86,7 +86,9 @@ plot(lead['ppm'])
 
 ===
 
-Use `geom_sf` to use simple features in [ggplot2]{}({:.rlib}) figures.
+For [ggplot2]({:.rlib}) figures, use `geom_sf` to draw maps. In the `aes` mapping for feature collections, the "x" and "y" variables are automatically assigned to the sticky "geometry" column, while other attributes can be assigned to visual elements like `fill` or `color`.
+
+===
 
 ```{r, title = '{{ site.handouts[0] }}'}
 library(ggplot2)
@@ -153,8 +155,6 @@ blockgroups[1:5, 'BKG_KEY']
 
 ===
 
-In the `aes` mapping for feature collections, the "x" and "y" variables are automatically assigned to the sticky "geometry" column, while other attributes can be assigned to visual elements like `fill` or (edge) `color`.
-
 ```{r}
 ggplot(blockgroups, aes(fill = Shape_Area)) +
   geom_sf()
@@ -162,12 +162,12 @@ ggplot(blockgroups, aes(fill = Shape_Area)) +
 
 ===
 
-Merging with a regular data frame is done by normal merging non-spatial columns
+Merging with a regular data frame is done by normal merging on non-spatial columns
 found in both tables.
 
 ```{r, title = '{{ site.handouts[0] }}' }
 census <- read.csv('data/SYR_census.csv')
-census$BKG_KEY <- factor(census$BKG_KEY)
+census$BKG_KEY <- as.character(census$BKG_KEY)
 ```
 
 As usual, there's the difficulty that CSV files do not include metadata on data
@@ -177,7 +177,7 @@ types, which have to be set manually.
 ===
 
 Merge tables on a unique identifier (our primary key is "BKG_KEY"), but let the
-"sf" object come first or is special attributes get lost.
+"sf" object come first or its special attributes get lost.
 
 ```{r, title = '{{ site.handouts[0] }}', message = FALSE, warning = FALSE}
 library(dplyr)

@@ -193,7 +193,9 @@ plot(lead['ppm'])
 
 ===
 
-Use `geom_sf` to use simple features in [ggplot2]{}({:.rlib}) figures.
+For [ggplot2]({:.rlib}) figures, use `geom_sf` to draw maps. In the `aes` mapping for feature collections, the "x" and "y" variables are automatically assigned to the sticky "geometry" column, while other attributes can be assigned to visual elements like `fill` or `color`.
+
+===
 
 
 
@@ -341,8 +343,6 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 
 ===
 
-In the `aes` mapping for feature collections, the "x" and "y" variables are automatically assigned to the sticky "geometry" column, while other attributes can be assigned to visual elements like `fill` or (edge) `color`.
-
 
 
 ~~~r
@@ -355,14 +355,14 @@ In the `aes` mapping for feature collections, the "x" and "y" variables are auto
 
 ===
 
-Merging with a regular data frame is done by normal merging non-spatial columns
+Merging with a regular data frame is done by normal merging on non-spatial columns
 found in both tables.
 
 
 
 ~~~r
 census <- read.csv('data/SYR_census.csv')
-census$BKG_KEY <- factor(census$BKG_KEY)
+census$BKG_KEY <- as.character(census$BKG_KEY)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -374,7 +374,7 @@ types, which have to be set manually.
 ===
 
 Merge tables on a unique identifier (our primary key is "BKG_KEY"), but let the
-"sf" object come first or is special attributes get lost.
+"sf" object come first or its special attributes get lost.
 
 
 
