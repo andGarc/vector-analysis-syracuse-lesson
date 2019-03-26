@@ -372,9 +372,9 @@ columns found in both tables.
 
 ~~~r
 census <- read.csv('data/SYR_census.csv')
-census <- within(census,
+census <- within(census, {
      BKG_KEY <- as.character(BKG_KEY)
-)
+})
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 

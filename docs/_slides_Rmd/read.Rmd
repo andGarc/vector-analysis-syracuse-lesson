@@ -177,9 +177,9 @@ columns found in both tables.
 
 ```{r, title = '{{ site.handouts[0] }}' }
 census <- read.csv('data/SYR_census.csv')
-census <- within(census,
+census <- within(census, {
      BKG_KEY <- as.character(BKG_KEY)
-)
+})
 ```
 
 As usual, there's the difficulty that CSV files do not include metadata on data
