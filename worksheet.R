@@ -1,5 +1,25 @@
-## Simple Features
+## Introduction
 
+# In this exercise, we perform common spatial queries and vector processing on 
+# census data at the block group and census track levels. The overall goal is 
+# to explore the distribution of metals and its association with various population groups. 
+# As a geospatial analyst and EPA consultant for the city of Syracuse, your task is to 
+# investigate the relationship between metal concentration (in particular lead) and 
+# population. In particular, research suggests higher concentration of metals in minorities. 
+# In addition, children are more at risk of lead poisoning. 
+
+# GOAL: Use non-spatial and spatial queries, table and spatial joins to subset datasets and 
+# explore at risk population in urban settings, specifically lead poisoning in Syracuse, NY.
+
+## PART I: EXPLORE DATA READ AND DISPLAY INPUTS
+# In this section, you perform multiple operations to explore the datasets. First, examine the 
+# number of rows and column for the spatial polygons (blocks, block groups and census tracks). 
+# Manipulate the datasets provided to join information using common table keys. To combine 
+# datasets, a spatial aggregation of the block group to census level is performed. 
+# Visualization of vector spatial data is illustrated with plot and ggplot commands for sf objects.
+
+## Simple Features
+library(magrittr)
 library(sf)
 
 lead <- read.csv('data/SYR_soil_PB.csv')
@@ -56,6 +76,13 @@ ggplot(..., aes(fill = POP2000)) +
   geom_sf() +
   geom_sf(..., color = 'red', fill = NA)
 
+## PART II: SPATIAL QUERY AND AGGREGATION
+# Join metals data to census track polygons using the common key ID. Add lead data to the 
+# datasets by converting the textfile of sample lead concentration into a spatial object. 
+# This is done by assigning coordinates to the data frame containing x and y coordinates and 
+# converting to a spatial object. Perform a spatial query using the “st_join” function and 
+# summarize average lead by census tracts.
+
 ## Spatial Join
 
 ggplot(..., aes(fill = POP2000)) +
@@ -78,6 +105,12 @@ census_lead_tracts <- census_tracts %>%
 ggplot(..., aes(fill = ...)) +
   geom_sf() +
   scale_fill_gradientn(colors = heat.colors(7))
+
+##PART III :  KRIGING SURFACES
+# Generate a raster layer from lead point measurements and aggregate lead levels at the 
+# census track levels. To generate a kriged surface, you will need to fit a variogram model 
+# to the sample lead measurements. The grid/raster spatial resolution is derived from the 
+# extent of the region and the application (coarser or finer depending on the use). 
 
 ## The Semivariogram
 
@@ -128,6 +161,15 @@ census_lead_tracts <-
 ggplot(...,
        aes(x = ..., y = ...)) +
   geom_point()
+
+##PART IV : SPATIAL AUTOCORRELATION AND REGRESSION
+#Examine spatial autocorrelation in lead data and perform a spatial regression between 
+# lead and percentage of Hispanic population. To do so, you will need to generate list of 
+# neighbors and weights for use in the Moran’ I. Moran’I s. Clustering is indicated by a 
+# Moran’s I greater than zero while negative Moran’s I signifies a “repulsion” process. 
+# Generate both measurements of Moran’s I and a scatterplot of its values.  The list of 
+# weights is also used in the spatial regression.
+
 
 ## Regression
 
