@@ -1,7 +1,7 @@
 ---
 ---
 
-## Objectives for this lesson
+## Lesson Objectives
 
 - Dive into scripting vector data operations
 - Learn to handle feature collections like tables
@@ -10,7 +10,7 @@
 
 ===
 
-## Specific achievements
+## Specific Achievements
 
 - Read CSVs and shapefiles
 - Intersect and dissolve geometries

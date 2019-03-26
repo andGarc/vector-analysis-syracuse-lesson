@@ -18,6 +18,11 @@ lead[['geometry']] <- st_sfc(
 {:.text-document title="{{ site.handouts[0] }}"}
 
 
+===
+
+The `lead` table now has the "simple feature column", which `st_sfc` creates from a CRS and a geometry type, but each point is "EMPTY". The empty gemometry is equivalent to a NA value.
+{:.notes}
+
 
 
 ~~~r
@@ -56,7 +61,8 @@ created from the "x" and "y" elements of a given feature.
 
 ~~~r
 lead[[1, 'geometry']] <- st_point(
-  c(x = lead[[1, 'x']], y = lead[[1, 'y']]),
+  c(x = lead[[1, 'x']],
+    y = lead[[1, 'y']]),
   dim = 'XY')
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
@@ -202,7 +208,8 @@ For [ggplot2]({:.rlib}) figures, use `geom_sf` to draw maps. In the `aes` mappin
 ~~~r
 library(ggplot2)
 
-ggplot(data = lead, mapping = aes(color = ppm)) +
+ggplot(data = lead,
+       mapping = aes(color = ppm)) +
   geom_sf()
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
@@ -264,7 +271,9 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 {:.output}
 
 
-Note the table dimensions show 147 features in the collection.
+===
+
+Also note the table dimensions reveal 147 features in the collection.
 
 
 
@@ -346,7 +355,8 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 
 
 ~~~r
-> ggplot(blockgroups, aes(fill = Shape_Area)) +
+> ggplot(blockgroups,
++        aes(fill = Shape_Area)) +
 +   geom_sf()
 ~~~
 {:.input title="Console"}
@@ -355,14 +365,16 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 
 ===
 
-Merging with a regular data frame is done by normal merging on non-spatial columns
-found in both tables.
+Merging with a regular data frame is done by normal merging on non-spatial
+columns found in both tables.
 
 
 
 ~~~r
 census <- read.csv('data/SYR_census.csv')
-census$BKG_KEY <- as.character(census$BKG_KEY)
+census <- within(census,
+     BKG_KEY <- as.character(BKG_KEY)
+)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -409,7 +421,8 @@ The census data is now easily vizualized as a map.
 
 
 ~~~r
-ggplot(census_blockgroups, aes(fill = POP2000)) +
+ggplot(census_blockgroups,
+       aes(fill = POP2000)) +
   geom_sf()
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
@@ -433,7 +446,7 @@ census_tracts <- census_blockgroups %>%
   group_by(TRACT) %>%
   summarise(
     POP2000 = sum(POP2000),
-    perc_hispa = sum(HISPANIC) / sum(POP2000))
+    perc_hispa = sum(HISPANIC) / POP2000)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 
@@ -447,9 +460,11 @@ boundaries were dissolved as expected.
 
 ~~~r
 tracts <- read_sf('data/ct_00')
-ggplot(census_tracts, aes(fill = POP2000)) +
+ggplot(census_tracts,
+       aes(fill = POP2000)) +
   geom_sf() +
-  geom_sf(data = tracts, color = 'red', fill = NA)
+  geom_sf(data = tracts,
+          color = 'red', fill = NA)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 ![ ]({{ site.baseurl }}/images/read/unnamed-chunk-22-1.png)

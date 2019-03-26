@@ -32,7 +32,8 @@ Is that model any good?
 
 
 ~~~r
-census_lead_tracts['lm.resid'] <- resid(ppm.lm)
+census_lead_tracts <- census_lead_tracts %>%
+  mutate(lm.resid = resid(ppm.lm))
 plot(census_lead_tracts['lm.resid'])
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
@@ -73,8 +74,10 @@ The `neighbors` variable is the network of features sharing a boundary point.
 
 
 ~~~r
-plot(census_lead_tracts['lm.resid'], reset = FALSE)
-plot.nb(tracts_nb, coordinates(tracts), add = TRUE)
+plot(census_lead_tracts['lm.resid'],
+     reset = FALSE)
+plot.nb(tracts_nb, coordinates(tracts),
+        add = TRUE)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 ![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-4-1.png)

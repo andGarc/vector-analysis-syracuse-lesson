@@ -14,7 +14,6 @@ library provides variogram estimation among several additional tools.
 
 ```{r, title = '{{ site.handouts[0] }}'}
 library(gstat)
-
 lead_xy <- read.csv('data/SYR_soil_PB.csv')
 ```
 
@@ -73,9 +72,11 @@ pred_ppm <- pred_ppm[idx]
 Map the result to verify generated points.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-ggplot(census_tracts, aes(fill = POP2000)) +
+ggplot(census_tracts,
+       aes(fill = POP2000)) +
   geom_sf() +
-  geom_sf(data = pred_ppm, color = 'red', fill = NA)
+  geom_sf(data = pred_ppm,
+          color = 'red', fill = NA)
 ```
 
 ===

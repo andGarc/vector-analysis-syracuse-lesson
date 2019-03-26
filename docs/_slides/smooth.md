@@ -16,7 +16,6 @@ library provides variogram estimation among several additional tools.
 
 ~~~r
 library(gstat)
-
 lead_xy <- read.csv('data/SYR_soil_PB.csv')
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
@@ -93,9 +92,11 @@ Map the result to verify generated points.
 
 
 ~~~r
-ggplot(census_tracts, aes(fill = POP2000)) +
+ggplot(census_tracts,
+       aes(fill = POP2000)) +
   geom_sf() +
-  geom_sf(data = pred_ppm, color = 'red', fill = NA)
+  geom_sf(data = pred_ppm,
+          color = 'red', fill = NA)
 ~~~
 {:.text-document title="{{ site.handouts[0] }}"}
 ![ ]({{ site.baseurl }}/images/smooth/unnamed-chunk-5-1.png)

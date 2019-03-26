@@ -26,7 +26,8 @@ ppm.lm <- lm(pred_ppm ~ perc_hispa,
 Is that model any good?
 
 ```{r, title = '{{ site.handouts[0] }}'}
-census_lead_tracts['lm.resid'] <- resid(ppm.lm)
+census_lead_tracts <- census_lead_tracts %>%
+  mutate(lm.resid = resid(ppm.lm))
 plot(census_lead_tracts['lm.resid'])
 ```
 
@@ -58,8 +59,10 @@ tracts_nb <- poly2nb(tracts)
 The `neighbors` variable is the network of features sharing a boundary point.
 
 ```{r, title = '{{ site.handouts[0] }}'}
-plot(census_lead_tracts['lm.resid'], reset = FALSE)
-plot.nb(tracts_nb, coordinates(tracts), add = TRUE)
+plot(census_lead_tracts['lm.resid'],
+     reset = FALSE)
+plot.nb(tracts_nb, coordinates(tracts),
+        add = TRUE)
 ```
 
 ===
