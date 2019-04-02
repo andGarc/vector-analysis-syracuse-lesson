@@ -8,6 +8,18 @@ handouts:
   - data/ct_00
   - data/SYR_census.csv
   - data/SYR_soil_PB.csv
+  - data/ct_00.shp
+  - data/ct_00.shx
+  - data/ct_00.dbf
+  - data/ct_00.prj
+  - data/bg_00.shp
+  - data/bg_00.shx
+  - data/bg_00.dbf
+  - data/bg_00.prj
+  - data/bk_00.shp
+  - data/bk_00.shx
+  - data/bk_00.dbf
+  - data/bk_00.prj
   - data/README.md
 tag: v0.1
 lesson: 1
