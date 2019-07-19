@@ -1,58 +1,17 @@
-# Site
+# Build Configuration
 
-title: Vector Operations in R
-subtitle: Lead Poisoning in Syracuse
-handouts:
-  - worksheet.R
-  - data/bg_00
-  - data/ct_00
-  - data/SYR_census.csv
-  - data/SYR_soil_PB.csv
-  - data/census.csv
-  - data/Soil_PB.csv
-  - data/SYR_metals.xlsx
-  - data/ct_00.shp
-  - data/ct_00.shx
-  - data/ct_00.dbf
-  - data/ct_00.prj
-  - data/bg_00.shp
-  - data/bg_00.shx
-  - data/bg_00.dbf
-  - data/bg_00.prj
-  - data/bk_00.shp
-  - data/bk_00.shx
-  - data/bk_00.dbf
-  - data/bk_00.prj
-  - data/README.md
-tag: v0.1
-lesson: 1
-instructor: Elizabeth Green
-authors: 
-  - Benoit Parmentier
-  - Ian Carroll
-
-# Slides
-
-slide_sorter:
-  - intro
-  - read
-  - join
-  - smooth
-  - regress
-  - conclude
-
-#####################################
-# Only modify content above or risk #
-# merge conflicts with upstream.    #
-#####################################
-
-# Style
-
-styleurl: https://cdn.rawgit.com/sesync-ci/lesson-style/v2.0/docs
-reveal: https://cdn.rawgit.com/hakimel/reveal.js/3.5.0
-
-# Jekyll
-
-markdown: kramdown
+markdown: kramdown 
 collections:
-  - slides
+  slides:
+    output: false
+  views:
+    output: true
+    permalink: /:name/
+  archive:
+    output: true
+    permalink: /:year/:month/:day/:title:output_ext
+
+# Asset Location
+
+imageurl: /assets/images/
+styleurl: /assets/css/
