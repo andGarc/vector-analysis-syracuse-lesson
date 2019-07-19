@@ -16,9 +16,22 @@ library provides variogram estimation among several additional tools.
 
 ~~~r
 library(gstat)
+~~~
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+
+
+~~~
+Registered S3 method overwritten by 'xts':
+  method     from
+  as.zoo.xts zoo 
+~~~
+{:.output}
+
+
+~~~r
 lead_xy <- read.csv('data/SYR_soil_PB.csv')
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -35,8 +48,8 @@ v_ppm <- variogram(
   data = lead_xy)
 plot(v_ppm)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/smooth/unnamed-chunk-2-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/smooth/unnamed-chunk-2-1.png" %})
 {:.captioned}
 
 ===
@@ -52,8 +65,8 @@ v_ppm_fit <- fit.variogram(
   model = vgm(1, "Sph", 900, 1))
 plot(v_ppm, v_ppm_fit)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/smooth/unnamed-chunk-3-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/smooth/unnamed-chunk-3-1.png" %})
 {:.captioned}
 
 ===
@@ -82,7 +95,7 @@ idx <- unlist(
   st_intersects(census_tracts, pred_ppm))
 pred_ppm <- pred_ppm[idx]
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -98,8 +111,8 @@ ggplot(census_tracts,
   geom_sf(data = pred_ppm,
           color = 'red', fill = NA)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/smooth/unnamed-chunk-5-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/smooth/unnamed-chunk-5-1.png" %})
 {:.captioned}
 
 ===
@@ -124,7 +137,7 @@ pred_ppm <- krige(
   newdata = pred_ppm,
   model = v_ppm_fit)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -145,7 +158,7 @@ census_lead_tracts <-
   census_lead_tracts %>%
   inner_join(pred_ppm_tracts)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -160,8 +173,8 @@ ggplot(census_lead_tracts,
        aes(x = pred_ppm, y = avg_ppm)) +
   geom_point()
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/smooth/unnamed-chunk-8-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/smooth/unnamed-chunk-8-1.png" %})
 {:.captioned}
 
 ===
@@ -173,7 +186,7 @@ The effect of paying attention to autocorrelation is subtle, but it is noticable
 ~~~r
 > census_lead_tracts[52,]
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -184,9 +197,9 @@ bbox:           xmin: 405633.1 ymin: 4762867 xmax: 406445.9 ymax: 4764711
 epsg (SRID):    32618
 proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 # A tibble: 1 x 6
-  TRACT POP2000 perc_hispa avg_ppm pred_ppm                        geometry
-  <int>   <int>      <dbl>   <dbl>    <dbl>                   <POLYGON [m]>
-1  5800    2715     0.0302    5.44     5.53 ((406445.9 4762893, 406017.5 4…
+  TRACT POP2000 perc_hispa                        geometry avg_ppm pred_ppm
+  <int>   <int>      <dbl>                   <POLYGON [m]>   <dbl>    <dbl>
+1  5800    2715     0.0302 ((406445.9 4762893, 406017.5 4…    5.44     5.53
 ~~~
 {:.output}
 

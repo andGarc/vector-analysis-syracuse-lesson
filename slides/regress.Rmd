@@ -16,7 +16,7 @@ The following model assumes an association (in the linear least-squares sense),
 between the hispanic population and lead concentrations and assumes independence
 of every census tract (i.e. row).
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 ppm.lm <- lm(pred_ppm ~ perc_hispa,
   census_lead_tracts)
 ```
@@ -25,7 +25,7 @@ ppm.lm <- lm(pred_ppm ~ perc_hispa,
 
 Is that model any good?
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 census_lead_tracts <- census_lead_tracts %>%
   mutate(lm.resid = resid(ppm.lm))
 plot(census_lead_tracts['lm.resid'])
@@ -45,9 +45,10 @@ Moran's I is the correlation between all pairs of features, weighted to
 emphasize features that are close together. It does not dodge the problem of
 distance weighting, but provides default assumptions for how to do it.
 
-```{r, title = '{{ site.handouts[0] }}', message = FALSE}
+```{r, handout = 0, message = FALSE}
 library(sp)
 library(spdep)
+library(spatialreg)
 
 tracts <- as(
   st_geometry(census_tracts), 'Spatial')
@@ -58,7 +59,7 @@ tracts_nb <- poly2nb(tracts)
 
 The `neighbors` variable is the network of features sharing a boundary point.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 plot(census_lead_tracts['lm.resid'],
      reset = FALSE)
 plot.nb(tracts_nb, coordinates(tracts),
@@ -69,16 +70,19 @@ plot.nb(tracts_nb, coordinates(tracts),
 
 Reshape the adjacency matrix into a list of neighbors with associated weights.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 tracts_weight <- nb2listw(tracts_nb)
 ```
 
 ===
 
-Visualize correlation between the residuals and the weighted average of their
-neighbors with `moran.plot` from the [spdep](){:.rlib}. The positive trend line is consistent with the earlier observation that features in close proximity have similar residuals.
+Visualize correlation between the residuals and the weighted average
+of their neighbors with `moran.plot` from the
+[spdep](){:.rlib}. The positive trend line is consistent with the
+earlier observation that features in close proximity have similar
+residuals.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 moran.plot(
   census_lead_tracts[['lm.resid']],
   tracts_weight,
@@ -96,7 +100,7 @@ the weighted average of neighbors.
 ```{r, include = FALSE}
 set.seed(20190327)
 ```
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 ppm.sarlm <- lagsarlm(
   pred_ppm ~ perc_hispa,
   data = census_lead_tracts,
@@ -110,7 +114,7 @@ The Moran's I plot of residuals now shows less correlation; which means the SAR
 model's assumption about spatial autocorrelation (i.e. between table rows) makes
 the rest of the model more plausible.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 moran.plot(
   resid(ppm.sarlm),
   tracts_weight,

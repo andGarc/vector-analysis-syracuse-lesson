@@ -1,3 +1,6 @@
+---
+---
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,59 +11,59 @@
 <meta name="description" content="Learn to manipulate vector data (on contaminated soil in Syracuse, NY).">
 <link rel="canonical"
   href="http://cyberhelp.sesync.org/vector-analysis-syracuse-lesson/course/archive.html">
-<link href="https://cdn.rawgit.com/sesync-ci/lesson-style/v2.0/docs/css/default.css" rel="stylesheet">
-<link href="https://cdn.rawgit.com/sesync-ci/lesson-style/v2.0/docs/css/syntax.css" rel="stylesheet">
-<link href="https://cdn.rawgit.com/sesync-ci/lesson-style/v2.0/docs/css/static.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/sesync-ci/lesson-style@v2.0/docs/css/default.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/sesync-ci/lesson-style@v2.0/docs/css/syntax.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/sesync-ci/lesson-style@v2.0/docs/css/static.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
     
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/www/htmlwidgets.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/www/htmlwidgets.js"></script>
   
   
 
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/lib/jquery/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/jquery/jquery.min.js"></script>
   
   
 
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/lib/leaflet/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/leaflet/leaflet.js"></script>
   
-  <link rel="stylesheet" href="/vector-analysis-syracuse-lesson/htmlwidgets/lib/leaflet/leaflet.css">
-  
-
-  
-  <link rel="stylesheet" href="/vector-analysis-syracuse-lesson/htmlwidgets/lib/leafletfix/leafletfix.css">
-  
-
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/plugins/Proj4Leaflet/proj4-compressed.js"></script>
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/plugins/Proj4Leaflet/proj4leaflet.js"></script>
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/leaflet/leaflet.css">
   
 
   
-  <link rel="stylesheet" href="/vector-analysis-syracuse-lesson/htmlwidgets/lib/rstudio_leaflet/rstudio_leaflet.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/leafletfix/leafletfix.css">
   
 
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/leaflet.js"></script>
-  
-  
-
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/lib/leaflet-providers/leaflet-providers.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/plugins/Proj4Leaflet/proj4-compressed.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/plugins/Proj4Leaflet/proj4leaflet.js"></script>
   
   
 
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/plugins/leaflet-providers-plugin/leaflet-providers-plugin.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/rstudio_leaflet/rstudio_leaflet.css">
+  
+
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/leaflet.js"></script>
   
   
 
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/lib/HomeButton/home-button.js"></script>
-  <script src="/vector-analysis-syracuse-lesson/htmlwidgets/lib/HomeButton/easy-button-src.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/leaflet-providers/leaflet-providers.js"></script>
   
-  <link rel="stylesheet" href="/vector-analysis-syracuse-lesson/htmlwidgets/lib/HomeButton/home-button.css">
+  
+
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/plugins/leaflet-providers-plugin/leaflet-providers-plugin.js"></script>
+  
+  
+
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/HomeButton/home-button.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/HomeButton/easy-button-src.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/HomeButton/home-button.css">
   
 
   
-  <link rel="stylesheet" href="/vector-analysis-syracuse-lesson/htmlwidgets/lib/popup/popup.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/htmlwidgets/lib/popup/popup.css">
   
 
 
@@ -256,7 +259,7 @@ First 10 features:
 
 <div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">lead</span><span class="p">[</span><span class="s1">'ppm'</span><span class="p">])</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-9-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-9-1.png" alt=" " /></p>
 
 <p>For <a href="{:.rlib}">ggplot2</a> figures, use <code class="highlighter-rouge">geom_sf</code> to draw maps. In the <code class="highlighter-rouge">aes</code> mapping for feature collections, the “x” and “y” variables are automatically assigned to the sticky “geometry” column, while other attributes can be assigned to visual elements like <code class="highlighter-rouge">fill</code> or <code class="highlighter-rouge">color</code>.</p>
 
@@ -266,7 +269,7 @@ First 10 features:
        </span><span class="n">mapping</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ppm</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_sf</span><span class="p">()</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-10-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-10-1.png" alt=" " /></p>
 
 <h2 id="feature-collections">Feature Collections</h2>
 
@@ -357,7 +360,7 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 </span><span class="o">+</span><span class="w">        </span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Shape_Area</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
 </span><span class="o">+</span><span class="w">   </span><span class="n">geom_sf</span><span class="p">()</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-16-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-16-1.png" alt=" " /></p>
 
 <p>Merging with a regular data frame is done by normal merging on non-spatial
 columns found in both tables.</p>
@@ -393,7 +396,7 @@ types, which have to be set manually.</p>
        </span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">POP2000</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_sf</span><span class="p">()</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-20-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-20-1.png" alt=" " /></p>
 
 <p>Feature collections also cooperate with the common “split-apply-combine” sequence of steps in data manipulation.</p>
 
@@ -420,7 +423,7 @@ boundaries were dissolved as expected.</p>
   </span><span class="n">geom_sf</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracts</span><span class="p">,</span><span class="w">
           </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'red'</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-22-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-22-1.png" alt=" " /></p>
 
 <p>By default, the sticky geometries are summarized with <code class="highlighter-rouge">st_union</code>. The
 alternative <code class="highlighter-rouge">st_combine</code> does not dissolve internal boundaries. Check
@@ -443,7 +446,7 @@ polygon contains each point.</p>
   </span><span class="n">geom_sf</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lead</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'red'</span><span class="p">,</span><span class="w">
           </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.1</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/join/unnamed-chunk-1-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/join/unnamed-chunk-1-1.png" alt=" " /></p>
 
 <p class="notes">In the previous section, we performed a table join using a non-spatial
 data type. More specifically, we performed an equality join: records were merged
@@ -451,7 +454,7 @@ wherever the join variable in the “left table” equalled the variable in the
 “right table”. Spatial joins operate on the “geometry” columns and require
 expanding beyond equality based matches. Several different kinds of “intersections” can be specified that denote a successful match.</p>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/TopologicSpatialRelarions2.png" alt="" width="70%" /><br />
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/TopologicSpatialRelarions2.png" alt="" width="70%" /><br />
 <em><a href="https://en.wikipedia.org/wiki/DE-9IM">Image</a> by Kraus / <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY</a></em></p>
 
 <p>Before doing any spatial join, it is essential that both tables share a common
@@ -563,7 +566,7 @@ spatial data can by dropped.</p>
   </span><span class="n">scale_fill_gradientn</span><span class="p">(</span><span class="w">
     </span><span class="n">colors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heat.colors</span><span class="p">(</span><span class="m">7</span><span class="p">))</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/join/unnamed-chunk-9-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/join/unnamed-chunk-9-1.png" alt=" " /></p>
 
 <p class="notes">A problem with this approach to aggregation is that it ignores autocorrelation. Points close to eachother tend to have similar values and shouldn’t be given equal weight in averages within a polygon.</p>
 
@@ -610,7 +613,7 @@ difference in lead concentrations beween sample points.</p>
   </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lead_xy</span><span class="p">)</span><span class="w">
 </span><span class="n">plot</span><span class="p">(</span><span class="n">v_ppm</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-2-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/smooth/unnamed-chunk-2-1.png" alt=" " /></p>
 
 <p>Fitting a model semivariogram tidies up the information about autocorrelation
 in the data, so we can use it for interpolation.</p>
@@ -620,7 +623,7 @@ in the data, so we can use it for interpolation.</p>
   </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vgm</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s2">"Sph"</span><span class="p">,</span><span class="w"> </span><span class="m">900</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
 </span><span class="n">plot</span><span class="p">(</span><span class="n">v_ppm</span><span class="p">,</span><span class="w"> </span><span class="n">v_ppm_fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-3-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/smooth/unnamed-chunk-3-1.png" alt=" " /></p>
 
 <h2 id="kriging">Kriging</h2>
 
@@ -652,7 +655,7 @@ Remember, that goal is aggregating lead concentrations within each census tract.
   </span><span class="n">geom_sf</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pred_ppm</span><span class="p">,</span><span class="w">
           </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'red'</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-5-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/smooth/unnamed-chunk-5-1.png" alt=" " /></p>
 
 <p>Almost done …</p>
 
@@ -693,7 +696,7 @@ deviations that correct for autocorrelation.</p>
        </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pred_ppm</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">avg_ppm</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_point</span><span class="p">()</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-8-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/smooth/unnamed-chunk-8-1.png" alt=" " /></p>
 
 <p>The effect of paying attention to autocorrelation is subtle, but it is noticable and had the expected effect in tract 5800. The pred_ppm value is a little higher than the average.</p>
 
@@ -742,7 +745,7 @@ of every census tract (i.e. row).</p>
   </span><span class="n">mutate</span><span class="p">(</span><span class="n">lm.resid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resid</span><span class="p">(</span><span class="n">ppm.lm</span><span class="p">))</span><span class="w">
 </span><span class="n">plot</span><span class="p">(</span><span class="n">census_lead_tracts</span><span class="p">[</span><span class="s1">'lm.resid'</span><span class="p">])</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-2-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/regress/unnamed-chunk-2-1.png" alt=" " /></p>
 
 <p class="notes">Polygons close to eachother tend to have similar residuals: there is
 autocorrelation. It is tempting to ask for a semivariogram plot of the
@@ -770,7 +773,7 @@ distance weighting, but provides default assumptions for how to do it.</p>
 </span><span class="n">plot.nb</span><span class="p">(</span><span class="n">tracts_nb</span><span class="p">,</span><span class="w"> </span><span class="n">coordinates</span><span class="p">(</span><span class="n">tracts</span><span class="p">),</span><span class="w">
         </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-4-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/regress/unnamed-chunk-4-1.png" alt=" " /></p>
 
 <p>Reshape the adjacency matrix into a list of neighbors with associated weights.</p>
 
@@ -786,7 +789,7 @@ neighbors with <code class="highlighter-rouge">moran.plot</code> from the <a hre
   </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">census_lead_tracts</span><span class="p">[[</span><span class="s1">'TRACT'</span><span class="p">]],</span><span class="w">
   </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-6-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/regress/unnamed-chunk-6-1.png" alt=" " /></p>
 
 <p>There are many ways to use geospatial information about tracts to impose
 assumptions about non-independence between observations in the regression. One
@@ -810,7 +813,7 @@ the rest of the model more plausible.</p>
   </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">census_lead_tracts</span><span class="p">[[</span><span class="s1">'TRACT'</span><span class="p">]],</span><span class="w">
   </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-9-1.png" alt=" " /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/regress/unnamed-chunk-9-1.png" alt=" " /></p>
 
 <p>Feeling more confident in the model, we can now take a look at the regression
 coefficients and overall model fit.</p>

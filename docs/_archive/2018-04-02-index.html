@@ -1,3 +1,6 @@
+---
+---
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,8 +10,8 @@
 <title>Vector Operations in R</title>
 <meta name="description" content="Learn to manipulate vector data (on contaminated soil in Syracuse, NY).">
 <link rel="canonical" href="http://cyberhelp.sesync.org/vector-analysis-syracuse-lesson/course/archive.html">
-<link rel="stylesheet" href="https://cdn.rawgit.com/sesync-ci/lesson-style/v1.3/docs/css/default.css">
-<link rel="stylesheet" href="https://cdn.rawgit.com/sesync-ci/lesson-style/v1.3/docs/css/static.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sesync-ci/lesson-style@v1.3/docs/css/default.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sesync-ci/lesson-style@v1.3/docs/css/static.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script>
 
   </head>
@@ -213,7 +216,7 @@ First 10 features:
 <div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">lead</span><span class="p">[</span><span class="s1">'ppm'</span><span class="p">])</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" /></p>
 
 <h2 id="feature-collections">Feature Collections</h2>
 
@@ -307,7 +310,7 @@ is assumed to be a map. Only the “y” needs to be specified.</p>
 <div class="language-r input highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">blockgroups</span><span class="p">[</span><span class="s1">'Shape_Area'</span><span class="p">])</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-15-1.png" alt="plot of chunk unnamed-chunk-15" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-15-1.png" alt="plot of chunk unnamed-chunk-15" /></p>
 
 <p>Merging with a regular data frame is done by normal merging non-spatial columns
 found in both tables.</p>
@@ -341,7 +344,7 @@ types, which have to be set manually.</p>
 <div class="language-r text-document highlighter-rouge" title="worksheet-1.R"><div class="highlight"><pre class="highlight"><code><span class="n">plot</span><span class="p">(</span><span class="n">census_blockgroups</span><span class="p">[</span><span class="s1">'POP2000'</span><span class="p">])</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-19-1.png" alt="plot of chunk unnamed-chunk-19" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-19-1.png" alt="plot of chunk unnamed-chunk-19" /></p>
 
 <p>Feature collections also cooperate with the common “split-apply-combine” sequence of steps in data manipulation.</p>
 
@@ -366,7 +369,7 @@ boundaries were dissolved as expected.</p>
 </span><span class="n">plot</span><span class="p">(</span><span class="n">sf</span><span class="o">$</span><span class="n">st_geometry</span><span class="p">(</span><span class="n">tracts</span><span class="p">),</span><span class="w"> </span><span class="n">border</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'red'</span><span class="p">,</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/read/unnamed-chunk-21-1.png" alt="plot of chunk unnamed-chunk-21" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/read/unnamed-chunk-21-1.png" alt="plot of chunk unnamed-chunk-21" /></p>
 
 <p>By default, the sticky geometries are summarized with <code class="highlighter-rouge">st_union</code>. The
 alternative <code class="highlighter-rouge">st_combine</code> does not dissolve internal boundaries. Check
@@ -390,7 +393,7 @@ polygon contains each point.</p>
   </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'.'</span><span class="p">,</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/join/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/join/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1" /></p>
 
 <p class="notes">In the previous section, we performed a table join using a non-spatial
 data type. More specifically, we performed an equality join: records were merged
@@ -398,7 +401,7 @@ wherever the join variable in the “left table” equalled the variable in the
 “right table”. Spatial joins operate on the “geometry” columns and require
 expanding beyond equality based matches. Several different kinds of “intersections” can be specified that denote a successful match.</p>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/TopologicSpatialRelarions2.png" alt="" width="70%" /><br />
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/TopologicSpatialRelarions2.png" alt="" width="70%" /><br />
 <em><a href="https://en.wikipedia.org/wiki/DE-9IM">Image</a> by Kraus / <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY</a></em></p>
 
 <p>Before doing any spatial join, it is essential that both tables share a common
@@ -489,7 +492,7 @@ spatial data can by dropped.</p>
   </span><span class="n">pal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heat.colors</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/join/unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/join/unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7" /></p>
 
 <p>A problem with this approach to aggregation is that it ignores autocorrelation. Points close to eachother tend to have similar values and shouldn’t be given equal weight in averages within a polygon.</p>
 
@@ -532,7 +535,7 @@ difference in lead concentrations beween sample points.</p>
 </span><span class="n">plot</span><span class="p">(</span><span class="n">v_ppm</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/smooth/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
 
 <p>Fitting a model semivariogram tidies up the information about autocorrelation
 in the data, so we can use it for interpolation.</p>
@@ -543,7 +546,7 @@ in the data, so we can use it for interpolation.</p>
 </span><span class="n">plot</span><span class="p">(</span><span class="n">v_ppm</span><span class="p">,</span><span class="w"> </span><span class="n">v_ppm_fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/smooth/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" /></p>
 
 <h2 id="kriging">Kriging</h2>
 
@@ -576,7 +579,7 @@ Remember, that goal is aggregating lead concentrations within each census tract.
   </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'.'</span><span class="p">,</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/smooth/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
 <p>Like the <code class="highlighter-rouge">gstat</code> function, the <code class="highlighter-rouge">krige</code> function doesn’t work seemlessly with
 <code class="highlighter-rouge">sf</code> objects, so again create a data frame with coordinates.</p>
@@ -634,7 +637,7 @@ joining the predicted concentrations in too.</p>
   </span><span class="n">pal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heat.colors</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/smooth/unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/smooth/unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10" /></p>
 
 <p>The effect of paying attention to autocorrelation is subtle, but it is noticable and had the expected effect in tract 5800.</p>
 
@@ -684,7 +687,7 @@ of every census tract (i.e. row).</p>
 </span><span class="n">plot</span><span class="p">(</span><span class="n">census_lead_tracts</span><span class="p">[</span><span class="s1">'lm.resid'</span><span class="p">])</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/regress/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
 
 <p class="notes">Polygons close to eachother tend to have similar residuals: there is
 autocorrelation. It is tempting to ask for a semivariogram plot of the
@@ -711,7 +714,7 @@ distance weighting, it actually adds flexibility, along with some norms.</p>
   </span><span class="n">sp</span><span class="o">$</span><span class="n">coordinates</span><span class="p">(</span><span class="n">tracts</span><span class="p">),</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/regress/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
 
 <p>Reshape the adjacency matrix into a list of neighbors with associated weights.</p>
 
@@ -728,7 +731,7 @@ neighbors with <code class="highlighter-rouge">moran.plot</code> from the <a hre
   </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/regress/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" /></p>
 
 <p>There are many ways to use geospatial information about tracts to impose
 assumptions about non-independence between observations in the regression. One
@@ -753,7 +756,7 @@ the rest of the model more plausible.</p>
   </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="captioned"><img src="/vector-analysis-syracuse-lesson/images/regress/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" /></p>
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/sesync-ci/vector-analysis-syracuse-lesson@v0.1/docs/images/regress/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" /></p>
 
 <p>Feeling more confident in the model, we can now take a look at the regression
 coefficients.</p>

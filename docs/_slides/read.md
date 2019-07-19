@@ -1,4 +1,8 @@
 ---
+output: 
+  html_document: 
+    keep_md: yes
+    self_contained: no
 ---
 
 ## Simple Features
@@ -15,7 +19,7 @@ lead[['geometry']] <- st_sfc(
   st_point(),
   crs = 32618)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -28,7 +32,7 @@ The `lead` table now has the "simple feature column", which `st_sfc` creates fro
 ~~~r
 > head(lead)
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -65,7 +69,7 @@ lead[[1, 'geometry']] <- st_point(
     y = lead[[1, 'y']]),
   dim = 'XY')
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 
@@ -73,7 +77,7 @@ lead[[1, 'geometry']] <- st_point(
 ~~~r
 > head(lead)
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -98,7 +102,7 @@ functions like `print` and `plot` to use methods introduced by the `sf` library.
 ~~~r
 lead <- st_sf(lead)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -111,14 +115,14 @@ number of records displayed.
 ~~~r
 > lead
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
 Simple feature collection with 3149 features and 4 fields (with 3149 geometries empty)
 geometry type:  POINT
 dimension:      XY
-bbox:           xmin: 408164.3 ymin: 4762321 xmax: 408164.3 ymax: 4762321
+bbox:           xmin: NA ymin: NA xmax: NA ymax: NA
 epsg (SRID):    32618
 proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 First 10 features:
@@ -150,7 +154,7 @@ lead <- st_as_sf(lead,
   coords = c('x', 'y'),
   crs = 32618)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 
@@ -158,7 +162,7 @@ lead <- st_as_sf(lead,
 ~~~r
 > lead
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -193,8 +197,15 @@ Now that table is an `sf` object, the data are easilly displayed as a map.
 ~~~r
 plot(lead['ppm'])
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/read/unnamed-chunk-9-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+
+
+~~~
+Warning in classInt::classIntervals(na.omit(values), min(nbreaks, n.unq), :
+N is large, and some styles will run very slowly; sampling imposed
+~~~
+{:.output}
+![ ]({% include asset.html path="images/read/unnamed-chunk-9-1.png" %})
 {:.captioned}
 
 ===
@@ -212,8 +223,8 @@ ggplot(data = lead,
        mapping = aes(color = ppm)) +
   geom_sf()
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/read/unnamed-chunk-10-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/read/unnamed-chunk-10-1.png" %})
 {:.captioned}
 
 ===
@@ -231,7 +242,7 @@ manipulations done on tabular data work just as well on `sf` objects.
 ~~~r
 blockgroups <- read_sf('data/bg_00')
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -243,7 +254,7 @@ Confirm that the coordinates in the geometry column are the correct UTMs.
 ~~~r
 > blockgroups
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -280,7 +291,7 @@ Also note the table dimensions reveal 147 features in the collection.
 ~~~r
 > dim(blockgroups)
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -298,7 +309,7 @@ Simple feature collections are data frames.
 ~~~r
 > class(blockgroups)
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -320,7 +331,7 @@ table operations, like subsetting.
 ~~~r
 > blockgroups[1:5, 'BKG_KEY']
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -359,8 +370,8 @@ proj4string:    +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs
 +        aes(fill = Shape_Area)) +
 +   geom_sf()
 ~~~
-{:.input title="Console"}
-![ ]({{ site.baseurl }}/images/read/unnamed-chunk-16-1.png)
+{:title="Console" .input}
+![ ]({% include asset.html path="images/read/unnamed-chunk-16-1.png" %})
 {:.captioned}
 
 ===
@@ -376,7 +387,7 @@ census <- within(census, {
      BKG_KEY <- as.character(BKG_KEY)
 })
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 As usual, there's the difficulty that CSV files do not include metadata on data
@@ -397,7 +408,7 @@ census_blockgroups <- inner_join(
   blockgroups, census,
   by = c('BKG_KEY'))
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 
@@ -405,7 +416,7 @@ census_blockgroups <- inner_join(
 ~~~r
 > class(census_blockgroups)
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~
@@ -425,8 +436,8 @@ ggplot(census_blockgroups,
        aes(fill = POP2000)) +
   geom_sf()
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/read/unnamed-chunk-20-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/read/unnamed-chunk-20-1.png" %})
 {:.captioned}
 
 ===
@@ -448,7 +459,7 @@ census_tracts <- census_blockgroups %>%
     POP2000 = sum(POP2000),
     perc_hispa = sum(HISPANIC) / POP2000)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -466,8 +477,8 @@ ggplot(census_tracts,
   geom_sf(data = tracts,
           color = 'red', fill = NA)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/read/unnamed-chunk-22-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/read/unnamed-chunk-22-1.png" %})
 {:.captioned}
 
 ===

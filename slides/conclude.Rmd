@@ -23,6 +23,7 @@ vector data in R.
 
 - [sp](){:.rlib}: a low level package with useful `Spatial*` class objects
 - [spdep](){:.rlib}
-  - `poly2nb`, `nb2listw`: calculate spatial neighbors and their weights
   - `moran.plot`: infer autocorrelation from residual scatter plots
+  - `poly2nb`, `nb2listw`: calculate spatial neighbors and their weights
+- [spatialreg](){:.rlib}
   - `lagsarlm`: SAR model estimation

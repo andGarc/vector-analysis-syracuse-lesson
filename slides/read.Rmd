@@ -1,11 +1,15 @@
 ---
+output: 
+  html_document: 
+    keep_md: yes
+    self_contained: no
 ---
 
 ## Simple Features
 
 A standardized set of geometric shapes are the essense of vector data, but these are next to useless outside a tabular structure.
 
-```{r, title = '{{ site.handouts[0] }}', message = FALSE}
+```{r, handout = 0, message = FALSE}
 library(sf)
 
 lead <- read.csv('data/SYR_soil_PB.csv')
@@ -37,7 +41,7 @@ head(lead)
 Each element of the simple feature column is a simple feature geometry, here
 created from the "x" and "y" elements of a given feature.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 lead[[1, 'geometry']] <- st_point(
   c(x = lead[[1, 'x']],
     y = lead[[1, 'y']]),
@@ -53,7 +57,7 @@ head(lead)
 The whole data frame must be cast to a simple feature object, which causes
 functions like `print` and `plot` to use methods introduced by the `sf` library.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 lead <- st_sf(lead)
 ```
 
@@ -71,7 +75,7 @@ lead
 Naturally, there is a shortcut to creating an `sf` object from a data frame with
 point coordinates. The CRS must be specified via EPSG integer or proj4 string.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 lead <- read.csv('data/SYR_soil_PB.csv')
 lead <- st_as_sf(lead,
   coords = c('x', 'y'),
@@ -86,7 +90,7 @@ lead
 
 Now that table is an `sf` object, the data are easilly displayed as a map.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 plot(lead['ppm'])
 ```
 
@@ -96,7 +100,7 @@ For [ggplot2]({:.rlib}) figures, use `geom_sf` to draw maps. In the `aes` mappin
 
 ===
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 library(ggplot2)
 
 ggplot(data = lead,
@@ -114,7 +118,7 @@ collections to non-spatial tabular data goes quite far; the usual data
 manipulations done on tabular data work just as well on `sf` objects.
 {:.notes}
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 blockgroups <- read_sf('data/bg_00')
 ```
 
@@ -175,7 +179,7 @@ ggplot(blockgroups,
 Merging with a regular data frame is done by normal merging on non-spatial
 columns found in both tables.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 census <- read.csv('data/SYR_census.csv')
 census <- within(census, {
      BKG_KEY <- as.character(BKG_KEY)
@@ -191,7 +195,7 @@ types, which have to be set manually.
 Merge tables on a unique identifier (our primary key is "BKG_KEY"), but let the
 "sf" object come first or its special attributes get lost.
 
-```{r, title = '{{ site.handouts[0] }}', message = FALSE, warning = FALSE}
+```{r, handout = 0, message = FALSE, warning = FALSE}
 library(dplyr)
 
 census_blockgroups <- inner_join(
@@ -207,7 +211,7 @@ class(census_blockgroups)
 
 The census data is now easily vizualized as a map.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 ggplot(census_blockgroups,
        aes(fill = POP2000)) +
   geom_sf()
@@ -223,7 +227,7 @@ Feature collections also cooperate with the common "split-apply-combine" sequenc
 
 ===
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 census_tracts <- census_blockgroups %>%
   group_by(TRACT) %>%
   summarise(
@@ -236,7 +240,7 @@ census_tracts <- census_blockgroups %>%
 Read in the census tracts from a separate shapefile to confirm that the
 boundaries were dissolved as expected.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 tracts <- read_sf('data/ct_00')
 ggplot(census_tracts,
        aes(fill = POP2000)) +

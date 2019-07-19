@@ -7,7 +7,7 @@ The data about lead contamination in soils is at points; the census information
 is for polygons. Combine the information from these tables by determining which
 polygon contains each point.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 ggplot(census_tracts,
        aes(fill = POP2000)) +
   geom_sf() +
@@ -24,7 +24,7 @@ wherever the join variable in the "left table" equalled the variable in the
 expanding beyond equality based matches. Several different kinds of "intersections" can be specified that denote a successful match.
 {:.notes}
 
-![]({{ site.baseurl }}/images/TopologicSpatialRelarions2.png){:width="70%"}  
+![]({% include asset.html path="images/TopologicSpatialRelarions2.png" %}){:width="70%"}  
 *[Image][geometry-predicates] by Kraus / [CC BY]*
 {:.captioned}
 
@@ -69,7 +69,7 @@ The population data is at the coarser scale, so the lead ought to be averaged
 within a census tract. Once each lead measurement is joined to "TRACT", the
 spatial data can by dropped.
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 lead_tracts <- lead %>%
     st_join(census_tracts) %>%
     st_drop_geometry()
@@ -79,7 +79,7 @@ lead_tracts <- lead %>%
 
 Two more steps to group the data by "TRACT" and average the lead concentrations within each "TRACT".
 
-```{r, title = '{{ site.handouts[0] }}' }
+```{r, handout = 0 }
 lead_tracts <- lead %>%
     st_join(census_tracts) %>%
     st_drop_geometry() %>%
@@ -91,7 +91,7 @@ lead_tracts <- lead %>%
 
 To visualize the average lead concentration from soil samples within each cencus tract, merge the data frame to the `sf` object on "TRACT".
 
-```{r, title = '{{ site.handouts[0] }}', message = FALSE}
+```{r, handout = 0, message = FALSE}
 census_lead_tracts <- census_tracts %>%
   inner_join(lead_tracts)
 ```
@@ -100,7 +100,7 @@ census_lead_tracts <- census_tracts %>%
 
 Make a plot of `avg_ppm` for each census tract.
 
-```{r, title = '{{ site.handouts[0] }}', message = FALSE}
+```{r, handout = 0, message = FALSE}
 ggplot(census_lead_tracts,
        aes(fill = avg_ppm)) +
   geom_sf() +
@@ -115,7 +115,7 @@ A problem with this approach to aggregation is that it ignores autocorrelation. 
 
 Take a closer look at tract 5800 (around 43.025N, 76.152W), and notice that several low values are nearly stacked on top of eachother.
 
-```{r, title = "{{ site.handouts[0] }}"}
+```{r, handout = 0}
 library(mapview)
 
 mapview(census_tracts,

@@ -22,7 +22,7 @@ of every census tract (i.e. row).
 ppm.lm <- lm(pred_ppm ~ perc_hispa,
   census_lead_tracts)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -36,8 +36,8 @@ census_lead_tracts <- census_lead_tracts %>%
   mutate(lm.resid = resid(ppm.lm))
 plot(census_lead_tracts['lm.resid'])
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-2-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/regress/unnamed-chunk-2-1.png" %})
 {:.captioned}
 
 ===
@@ -59,12 +59,13 @@ distance weighting, but provides default assumptions for how to do it.
 ~~~r
 library(sp)
 library(spdep)
+library(spatialreg)
 
 tracts <- as(
   st_geometry(census_tracts), 'Spatial')
 tracts_nb <- poly2nb(tracts)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -79,8 +80,8 @@ plot(census_lead_tracts['lm.resid'],
 plot.nb(tracts_nb, coordinates(tracts),
         add = TRUE)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-4-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/regress/unnamed-chunk-4-1.png" %})
 {:.captioned}
 
 ===
@@ -92,13 +93,16 @@ Reshape the adjacency matrix into a list of neighbors with associated weights.
 ~~~r
 tracts_weight <- nb2listw(tracts_nb)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
 
-Visualize correlation between the residuals and the weighted average of their
-neighbors with `moran.plot` from the [spdep](){:.rlib}. The positive trend line is consistent with the earlier observation that features in close proximity have similar residuals.
+Visualize correlation between the residuals and the weighted average
+of their neighbors with `moran.plot` from the
+[spdep](){:.rlib}. The positive trend line is consistent with the
+earlier observation that features in close proximity have similar
+residuals.
 
 
 
@@ -109,8 +113,8 @@ moran.plot(
   labels = census_lead_tracts[['TRACT']],
   pch = 19)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-6-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/regress/unnamed-chunk-6-1.png" %})
 {:.captioned}
 
 ===
@@ -130,7 +134,7 @@ ppm.sarlm <- lagsarlm(
   tracts_weight,
   tol.solve = 1.0e-30)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ===
@@ -148,8 +152,8 @@ moran.plot(
   labels = census_lead_tracts[['TRACT']],
   pch = 19)
 ~~~
-{:.text-document title="{{ site.handouts[0] }}"}
-![ ]({{ site.baseurl }}/images/regress/unnamed-chunk-9-1.png)
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+![ ]({% include asset.html path="images/regress/unnamed-chunk-9-1.png" %})
 {:.captioned}
 
 ===
@@ -162,7 +166,7 @@ coefficients and overall model fit.
 ~~~r
 > summary(ppm.sarlm)
 ~~~
-{:.input title="Console"}
+{:title="Console" .input}
 
 
 ~~~

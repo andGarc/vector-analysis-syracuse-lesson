@@ -12,7 +12,7 @@ locations are distant.
 The [gstat](){:.rlib} library, a geospatial analogue to the [stats](){:.rlib}
 library provides variogram estimation among several additional tools.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 library(gstat)
 lead_xy <- read.csv('data/SYR_soil_PB.csv')
 ```
@@ -22,7 +22,7 @@ lead_xy <- read.csv('data/SYR_soil_PB.csv')
 The empirical semivariogram shown below is a windowed average of the squared
 difference in lead concentrations beween sample points.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 v_ppm <- variogram(
   ppm ~ 1,
   locations = ~ x + y,
@@ -35,7 +35,7 @@ plot(v_ppm)
 Fitting a model semivariogram tidies up the information about autocorrelation
 in the data, so we can use it for interpolation.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 v_ppm_fit <- fit.variogram(
   v_ppm,
   model = vgm(1, "Sph", 900, 1))
@@ -58,7 +58,7 @@ Generate a low resolution (for demonstration) grid of points overlaying the
 bounding box for the lead data and trim it down to the polygons of interest.
 Remember, that goal is aggregating lead concentrations within each census tract.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 pred_ppm <- st_make_grid(
   lead, cellsize = 400,
   what = 'centers')
@@ -71,7 +71,7 @@ pred_ppm <- pred_ppm[idx]
 
 Map the result to verify generated points.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 ggplot(census_tracts,
        aes(fill = POP2000)) +
   geom_sf() +
@@ -92,7 +92,7 @@ Almost done ...
 The first argument specifies the model for the means, which is constant according to our 
 formula for lead concentrations. The observed ppm values are in the `locations` data.frame along with the point geometry. The result is a data frame with predictions for lead concentrations at the points in `newdata`.
 
-```{r, title = '{{ site.handouts[0] }}', results = 'hide'}
+```{r, handout = 0, results = 'hide'}
 pred_ppm <- krige(
   formula = ppm ~ 1,
   locations = lead,
@@ -105,7 +105,7 @@ pred_ppm <- krige(
 And the same commands that joined lead concentrations to census tracts apply to
 joining the predicted concentrations in too.
 
-```{r, title = '{{ site.handouts[0] }}', message = FALSE}
+```{r, handout = 0, message = FALSE}
 pred_ppm_tracts <-
   pred_ppm %>%
   st_join(census_tracts) %>%
@@ -122,7 +122,7 @@ census_lead_tracts <-
 The predictions should be, and are, close to the original averages with
 deviations that correct for autocorrelation.
 
-```{r, title = '{{ site.handouts[0] }}'}
+```{r, handout = 0}
 ggplot(census_lead_tracts,
        aes(x = pred_ppm, y = avg_ppm)) +
   geom_point()
